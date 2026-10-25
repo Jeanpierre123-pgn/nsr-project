@@ -16,6 +16,7 @@ The webinar states that the submission must include a public GitHub link, a depl
 - [ ] Record a screen demonstration under 3 minutes and save it as `.webm` or `.gif` in `demo/`.
 - [ ] Create a public GitHub repository and push the complete project.
 - [ ] Deploy the app publicly and test the deployed URL in a private/incognito browser window.
+- [x] Public deployment created: https://agristat-rwanda.streamlit.app
 - [ ] Replace the local URL in the final submission form with the public deployed URL.
 - [ ] Confirm the team has two eligible students, including at least one Rwandan citizen, and retain student eligibility documents.
 - [ ] Declare that the work is original and acknowledge NISR, the official catalog, the webinar, and any other sources used.
