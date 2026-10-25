@@ -5,8 +5,9 @@ The dashboard currently runs with an illustrative dataset generated in `app.py` 
 For the final submission, download an approved Agriculture Household Survey extract from the official NISR portal and place the CSV or XLSX file in this folder:
 
 - Catalog: https://microdata.statistics.gov.rw/index.php/catalog
-- AHS 2024 study: https://microdata.statistics.gov.rw/index.php/catalog/123
-- AHS 2024 data dictionary: https://microdata.statistics.gov.rw/index.php/catalog/123/data_dictionary
+- AHS 2017 study: https://microdata.statistics.gov.rw/index.php/catalog/90
+- AHS 2017 data dictionary: https://microdata.statistics.gov.rw/index.php/catalog/90/data_dictionary
+- AHS 2017 related materials: https://microdata.statistics.gov.rw/index.php/catalog/90/related_materials
 
 The loader requires at least these columns: `Province`, `Crop`, and `Yield (kg/ha)`. It also recognises `Season`, `Fertilizer`, `Irrigation`, `Improved seed`, and `Land tenure`.
 

@@ -103,11 +103,11 @@ st.markdown(f'<span class="source-pill">● {source}</span>', unsafe_allow_html=
 
 with st.expander("About the official NISR source"):
     st.markdown(
-        "**Agriculture Household Survey 2024**  \n"
-        "Reference ID: `RWA-NISR-RAHS-2024-V0.1`  ·  Producer: National Institute of Statistics of Rwanda  ·  Country: Rwanda"
+        "**Agricultural Household Survey 2017**  \n"
+        "Reference ID: `RWA-NISR-RAHS-2017-V0.1`  ·  Producer: National Institute of Statistics of Rwanda  ·  Country: Rwanda"
     )
-    st.caption("The official data dictionary includes land tenure; crop grown, seeds, production, agricultural inputs and practices; extension services and agricultural programmes; agricultural tools; and sustainable agriculture.")
-    st.markdown("[Open the NISR study page](https://microdata.statistics.gov.rw/index.php/catalog/123) · [Open the data dictionary](https://microdata.statistics.gov.rw/index.php/catalog/123/data_dictionary)")
+    st.caption("The official data dictionary includes land tenure and crops planted; agricultural inputs; agricultural practices; production, use, storage and expenses; extension services; and agricultural programmes for the 2016–2017 agricultural year.")
+    st.markdown("[Open the NISR study page](https://microdata.statistics.gov.rw/index.php/catalog/90) · [Open the data dictionary](https://microdata.statistics.gov.rw/index.php/catalog/90/data_dictionary) · [Open related materials](https://microdata.statistics.gov.rw/index.php/catalog/90/related_materials)")
 
 if filtered.empty:
     st.warning("No observations match the selected filters. Choose at least one province and crop to continue.")
