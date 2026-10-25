@@ -86,9 +86,9 @@ with st.sidebar:
     else:
         selected_seasons = []
     st.divider()
-    st.caption("Data readiness")
+    st.caption("Current data mode")
     st.progress(min(len(df) / 1000, 1.0), text=f"{len(df):,} observations available")
-    st.caption("Drop a CSV or XLSX file into the data/ folder and refresh the app to use your NISR extract.")
+    st.caption("Public demo mode: this view uses clearly labelled illustrative observations. The dashboard is ready for an approved NISR extract when one is available.")
 
 filtered = df[df["Province"].astype(str).isin(selected_provinces) & df["Crop"].astype(str).isin(selected_crops)].copy()
 if "Season" in filtered.columns and selected_seasons:
