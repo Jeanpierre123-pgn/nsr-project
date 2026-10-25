@@ -19,6 +19,13 @@
 - [ ] Confirm the team has two eligible students, including at least one Rwandan citizen, and retain the required student documents.
 - [ ] Confirm the work is original and acknowledge NISR, the official catalog, the webinar, the DDI/documentation, and any other sources used.
 
+## Team information provided
+
+- MUHAYIMANA Jean Pierre
+- TUYISHIME Fabrice
+
+Registration numbers are stored locally in `TEAM_DETAILS_PRIVATE.md` and intentionally excluded from the public repository. Confirm citizenship and attach official student documents in the final submission form.
+
 ## Why these items are not automatically complete
 
 The GitHub/deployment tasks are technical and are complete. The remaining tasks require either NISR account access, organizer approval, team eligibility information, or a human-recorded demonstration. They cannot be safely invented by the application.
