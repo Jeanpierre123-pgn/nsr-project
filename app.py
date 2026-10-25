@@ -109,6 +109,13 @@ with st.expander("About the official NISR source"):
     st.caption("The official data dictionary includes land tenure and crops planted; agricultural inputs; agricultural practices; production, use, storage and expenses; extension services; and agricultural programmes for the 2016–2017 agricultural year.")
     st.markdown("[Open the NISR study page](https://microdata.statistics.gov.rw/index.php/catalog/90) · [Open the data dictionary](https://microdata.statistics.gov.rw/index.php/catalog/90/data_dictionary) · [Open related materials](https://microdata.statistics.gov.rw/index.php/catalog/90/related_materials)")
 
+with st.expander("Survey scope and methodology"):
+    st.markdown("**Agricultural year:** 2016–2017  ·  **Reference:** `RWA-NISR-RAHS-2017-V0.1`")
+    st.caption("The NISR catalog describes 16 data files covering general information, household characteristics, land tenure and crops planted, extension services, funding, agricultural inputs, agricultural practices, tools, production and expenses, livestock, milk, honey, and animal services.")
+    st.markdown("**Relevant analysis sections**")
+    st.markdown("- Section II: land tenure and crops planted  \n- Section V: organic/inorganic fertilizer, pesticides and seeds  \n- Section VI: erosion control, irrigation and mechanization  \n- Sections VIII A/B: production, use, storage and expenses")
+    st.markdown("[AHS 2017 questionnaire](https://microdata.statistics.gov.rw/index.php/catalog/90/download/837) · [AHS 2017 report](https://microdata.statistics.gov.rw/index.php/catalog/90/download/838)")
+
 if filtered.empty:
     st.warning("No observations match the selected filters. Choose at least one province and crop to continue.")
     st.stop()
