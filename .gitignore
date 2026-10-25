@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.streamlit/secrets.toml
+data/*.csv
+data/*.xlsx
+demo/*.webm
+demo/*.gif
+*.pdf
+*.zip
