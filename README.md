@@ -25,6 +25,10 @@ The simplest submission path is [Streamlit Community Cloud](https://share.stream
 
 Live demo: https://agristat-rwanda.streamlit.app
 
+### Demo access
+
+This is a public read-only demo and does not require an account, password, or login. Reviewers can open the live URL directly.
+
 ## Load an NISR extract
 
 Place one `.csv` or `.xlsx` file in `data/` and refresh the app. The loader recognises these column names (case-insensitive): `Province`, `Crop`, `Yield (kg/ha)`, `Season`, `Fertilizer`, `Irrigation`, `Improved seed`, and `Land tenure`. The minimum required fields are `Province`, `Crop`, and `Yield (kg/ha)`.

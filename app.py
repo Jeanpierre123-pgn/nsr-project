@@ -161,4 +161,4 @@ if "Land tenure" in filtered.columns:
     st.dataframe(tenure.sort_values("average_yield", ascending=False).style.format({"average_yield": "{:,.0f}", "observations": "{:,.0f}"}), width="stretch", hide_index=True)
 
 st.markdown(f'<div class="insight"><strong>Reading the dashboard:</strong> {top_crop} has the highest average yield in this view. Use the filters to test whether that pattern holds across provinces, seasons and input practices.</div>', unsafe_allow_html=True)
-st.markdown('<div class="footer">AgriStat Rwanda · Prepared for the NISR Big Data Hackathon · Demo data is illustrative until an official extract is loaded.</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">AgriStat Rwanda · Public demo — no login required · Prepared for the NISR Big Data Hackathon · Demo data is illustrative until an official extract is loaded.</div>', unsafe_allow_html=True)
