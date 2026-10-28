@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import random
+from urllib.parse import urlparse
 
 import pandas as pd
 import plotly.express as px
@@ -44,7 +46,8 @@ def _demo_data() -> pd.DataFrame:
 
 
 def _find_data_file() -> Path | None:
-    files = sorted(DATA_DIR.glob("*.csv")) + sorted(DATA_DIR.glob("*.xlsx"))
+    files = sorted(path for path in DATA_DIR.glob("*.csv") if path.name.lower() != "benchmarks.csv")
+    files += sorted(DATA_DIR.glob("*.xlsx"))
     if len(files) > 1:
         st.error("More than one CSV/XLSX file was found in data/. Keep only the dataset you want the dashboard to load.")
         st.stop()
@@ -52,8 +55,7 @@ def _find_data_file() -> Path | None:
 
 
 @st.cache_data(show_spinner=False)
-def load_data() -> tuple[pd.DataFrame, str]:
-    file_path = _find_data_file()
+def load_data(file_path: Path | None, file_signature: tuple[int, int, int] | None) -> tuple[pd.DataFrame, str]:
     if file_path is None:
         return _demo_data(), "Illustrative synthetic demo data"
     try:
@@ -65,18 +67,163 @@ def load_data() -> tuple[pd.DataFrame, str]:
 
 
 def _normalise(frame: pd.DataFrame) -> pd.DataFrame:
-    aliases = {"province": "Province", "region": "Province", "district": "District", "crop": "Crop", "season": "Season", "farm size": "Farm size (ha)", "farm_size": "Farm size (ha)", "yield": "Yield (kg/ha)", "yield (kg/ha)": "Yield (kg/ha)", "fertilizer": "Fertilizer", "irrigation": "Irrigation", "improved seed": "Improved seed", "land tenure": "Land tenure"}
+    aliases = {
+        "province": "Province", "region": "Province", "district": "District",
+        "crop": "Crop", "season": "Season", "year": "Year", "survey year": "Year",
+        "farm size": "Farm size (ha)",
+        "farm_size": "Farm size (ha)", "yield": "Yield (kg/ha)",
+        "yield (kg/ha)": "Yield (kg/ha)", "fertilizer": "Fertilizer",
+        "irrigation": "Irrigation", "improved seed": "Improved seed",
+        "land tenure": "Land tenure", "production": "Production (kg)",
+        "production (kg)": "Production (kg)", "harvested area": "Harvested area (ha)",
+        "harvested area (ha)": "Harvested area (ha)",
+        "area": "Province", "benchmark yield": "Benchmark yield (kg/ha)",
+        "benchmark yield (kg/ha)": "Benchmark yield (kg/ha)",
+        "source": "Source URL", "source url": "Source URL",
+    }
     return frame.rename(columns={column: aliases.get(str(column).strip().lower(), column) for column in frame.columns})
 
 
-df, source = load_data()
+def _yield_summary(frame: pd.DataFrame, group_by: list[str] | None = None) -> pd.DataFrame:
+    grouping: str | list[str] = group_by[0] if group_by and len(group_by) == 1 else group_by or []
+    if "Production (kg)" in frame.columns and "Harvested area (ha)" in frame.columns:
+        if group_by:
+            summary = frame.groupby(grouping, as_index=False).agg(
+                production_kg=("Production (kg)", "sum"),
+                harvested_area_ha=("Harvested area (ha)", "sum"),
+                observations=("Yield (kg/ha)", "size"),
+            )
+        else:
+            summary = pd.DataFrame([{
+                "production_kg": frame["Production (kg)"].sum(),
+                "harvested_area_ha": frame["Harvested area (ha)"].sum(),
+                "observations": len(frame),
+            }])
+        summary["Yield (kg/ha)"] = summary["production_kg"] / summary["harvested_area_ha"]
+        return summary
+    if group_by:
+        return frame.groupby(grouping, as_index=False).agg(
+            **{"Yield (kg/ha)": ("Yield (kg/ha)", "mean")},
+            observations=("Yield (kg/ha)", "size"),
+        )
+    return pd.DataFrame([{
+        "Yield (kg/ha)": frame["Yield (kg/ha)"].mean(),
+        "observations": len(frame),
+    }])
+
+
+def _load_benchmarks() -> pd.DataFrame:
+    path = DATA_DIR / "benchmarks.csv"
+    if not path.exists():
+        return pd.DataFrame()
+    try:
+        benchmarks = _normalise(pd.read_csv(path))
+    except (OSError, ValueError, pd.errors.ParserError) as exc:
+        st.error(f"Could not read {path.name}: {exc}")
+        st.stop()
+    required = {"Crop", "Province", "Year", "Benchmark yield (kg/ha)", "Source URL"}
+    missing = sorted(required - set(benchmarks.columns))
+    if missing:
+        st.error(f"{path.name} is missing required columns: {', '.join(missing)}.")
+        st.stop()
+    benchmarks["Crop"] = benchmarks["Crop"].astype("string").str.strip()
+    benchmarks["Province"] = benchmarks["Province"].astype("string").str.strip()
+    benchmarks["Year"] = benchmarks["Year"].astype("string").str.strip()
+    benchmarks["Source URL"] = benchmarks["Source URL"].astype("string").str.strip()
+    if "Season" not in benchmarks.columns:
+        benchmarks["Season"] = ""
+    else:
+        benchmarks["Season"] = benchmarks["Season"].fillna("").astype("string").str.strip()
+    benchmarks["Benchmark yield (kg/ha)"] = pd.to_numeric(
+        benchmarks["Benchmark yield (kg/ha)"], errors="coerce"
+    )
+    valid_source_url = benchmarks["Source URL"].map(
+        lambda value: urlparse(str(value)).scheme in {"http", "https"}
+        and bool(urlparse(str(value)).netloc)
+    )
+    invalid = (
+        benchmarks[["Crop", "Province", "Year", "Source URL"]].isna().any(axis=1)
+        | benchmarks[["Crop", "Province", "Year", "Source URL"]].eq("").any(axis=1)
+        | benchmarks["Benchmark yield (kg/ha)"].isna()
+        | (benchmarks["Benchmark yield (kg/ha)"] <= 0)
+        | ~valid_source_url
+    )
+    if invalid.any():
+        st.error(f"{path.name} contains incomplete rows or non-positive benchmark yields.")
+        st.stop()
+    keys = ["Crop", "Province", "Year", "Season"]
+    if benchmarks.duplicated(keys).any():
+        st.error(f"{path.name} must contain only one benchmark per crop, area, year, and season.")
+        st.stop()
+    return benchmarks
+
+
+def _district_geojson() -> tuple[dict | None, str | None]:
+    path = DATA_DIR / "district_boundaries.geojson"
+    if not path.exists():
+        return None, None
+    try:
+        with path.open(encoding="utf-8") as geojson_file:
+            geojson = json.load(geojson_file)
+    except (OSError, json.JSONDecodeError) as exc:
+        return None, f"Could not read {path.name}: {exc}"
+    if not isinstance(geojson, dict) or geojson.get("type") != "FeatureCollection" or not isinstance(geojson.get("features"), list):
+        return None, f"{path.name} must be a GeoJSON FeatureCollection."
+    if not geojson["features"] or any(
+        not isinstance(feature, dict)
+        or not isinstance(feature.get("properties"), dict)
+        or not isinstance(feature.get("geometry"), dict)
+        or feature["geometry"].get("type") not in {"Polygon", "MultiPolygon"}
+        or not isinstance(feature["geometry"].get("coordinates"), list)
+        or not feature["geometry"]["coordinates"]
+        for feature in geojson["features"]
+    ):
+        return None, f"{path.name} must contain polygon features with properties."
+    properties = [feature["properties"] for feature in geojson["features"]]
+    for property_name in ("District", "district", "NAME_2", "name"):
+        if properties and all(property_name in item for item in properties):
+            return geojson, property_name
+    return None, f"{path.name} must include a district-name property (District, district, NAME_2, or name)."
+
+
+data_file = _find_data_file()
+if data_file is not None:
+    data_stat = data_file.stat()
+    data_signature = (data_stat.st_mtime_ns, data_stat.st_size, data_stat.st_ctime_ns)
+else:
+    data_signature = None
+df, source = load_data(data_file, data_signature)
 df = _normalise(df)
-if not {"Province", "Crop", "Yield (kg/ha)"}.issubset(df.columns):
-    missing_columns = sorted({"Province", "Crop", "Yield (kg/ha)"} - set(df.columns))
+benchmarks = _load_benchmarks()
+for dimension in ["Province", "District", "Crop", "Season", "Year"]:
+    if dimension in df.columns:
+        df[dimension] = df[dimension].astype("string").str.strip()
+if "Year" in df.columns:
+    df["Year"] = df["Year"].str.replace(r"\.0$", "", regex=True)
+has_yield = "Yield (kg/ha)" in df.columns
+has_production_and_area = {"Production (kg)", "Harvested area (ha)"}.issubset(df.columns)
+if not {"Province", "Crop"}.issubset(df.columns) or not (has_yield or has_production_and_area):
+    missing_columns = sorted({"Province", "Crop"} - set(df.columns))
+    if not (has_yield or has_production_and_area):
+        missing_columns.append("Yield (kg/ha) or both Production (kg) and Harvested area (ha)")
     st.error(f"The dataset is missing required columns: {', '.join(missing_columns)}. Check the column names in the data README.")
     st.stop()
 
-df["Yield (kg/ha)"] = pd.to_numeric(df["Yield (kg/ha)"], errors="coerce")
+if has_yield:
+    df["Yield (kg/ha)"] = pd.to_numeric(df["Yield (kg/ha)"], errors="coerce")
+if has_production_and_area:
+    if not has_yield:
+        df["Yield (kg/ha)"] = pd.NA
+    df["Production (kg)"] = pd.to_numeric(df["Production (kg)"], errors="coerce")
+    df["Harvested area (ha)"] = pd.to_numeric(df["Harvested area (ha)"], errors="coerce")
+    valid_totals = (df["Production (kg)"] >= 0) & (df["Harvested area (ha)"] > 0)
+    df.loc[valid_totals, "Yield (kg/ha)"] = (
+        df.loc[valid_totals, "Production (kg)"] / df.loc[valid_totals, "Harvested area (ha)"]
+    )
+    df.loc[~valid_totals, "Yield (kg/ha)"] = pd.NA
+    yield_method = "Total production ÷ total harvested area"
+else:
+    yield_method = "Mean of reported farm-level yields"
 invalid_yield_count = int(df["Yield (kg/ha)"].isna().sum())
 missing_dimension_count = int(df[["Province", "Crop"]].isna().any(axis=1).sum())
 if invalid_yield_count or missing_dimension_count:
@@ -105,6 +252,11 @@ with st.sidebar:
         selected_seasons = st.multiselect("Season", season_options, default=season_options)
     else:
         selected_seasons = []
+    if "Year" in df.columns:
+        year_options = sorted(df["Year"].dropna().astype(str).unique())
+        selected_years = st.multiselect("Year", year_options, default=year_options)
+    else:
+        selected_years = []
     st.divider()
     st.caption("Current data mode")
     st.progress(min(len(df) / 1000, 1.0), text=f"{len(df):,} observations available")
@@ -116,6 +268,8 @@ with st.sidebar:
 filtered = df[df["Province"].astype(str).isin(selected_provinces) & df["Crop"].astype(str).isin(selected_crops)].copy()
 if "Season" in filtered.columns and selected_seasons:
     filtered = filtered[filtered["Season"].astype(str).isin(selected_seasons)]
+if "Year" in filtered.columns and selected_years:
+    filtered = filtered[filtered["Year"].astype(str).isin(selected_years)]
 filtered["Yield (kg/ha)"] = pd.to_numeric(filtered["Yield (kg/ha)"], errors="coerce")
 filtered = filtered.dropna(subset=["Yield (kg/ha)"])
 
@@ -143,7 +297,8 @@ if filtered.empty:
     st.warning("No observations match the selected filters. Choose at least one province and crop to continue.")
     st.stop()
 
-average_yield = filtered["Yield (kg/ha)"].mean() if filtered["Crop"].nunique() == 1 else None
+overall_summary = _yield_summary(filtered)
+average_yield = overall_summary.iloc[0]["Yield (kg/ha)"] if filtered["Crop"].nunique() == 1 else None
 provinces_count = filtered["Province"].nunique()
 crops_count = filtered["Crop"].nunique()
 
@@ -158,23 +313,113 @@ metric_cols[1].metric(
 )
 metric_cols[2].metric("Crops represented", f"{crops_count}")
 metric_cols[3].metric("Areas represented", f"{provinces_count}")
+st.caption(f"Yield method: {yield_method}. Sample counts are shown for each summary.")
 
 st.markdown("## Productivity overview")
 left, right = st.columns([1.35, 1])
 with left:
     st.markdown("**Average yield by crop**")
-    crop_summary = filtered.groupby("Crop", as_index=False)["Yield (kg/ha)"].mean().sort_values("Yield (kg/ha)")
-    fig = px.bar(crop_summary, x="Yield (kg/ha)", y="Crop", orientation="h", text_auto=".0f", color_discrete_sequence=[ACCENT])
+    crop_summary = _yield_summary(filtered, ["Crop"]).sort_values("Yield (kg/ha)")
+    fig = px.bar(crop_summary, x="Yield (kg/ha)", y="Crop", orientation="h", text_auto=".0f", color_discrete_sequence=[ACCENT], custom_data=["observations"])
+    fig.update_traces(hovertemplate="%{y}<br>Yield: %{x:,.0f} kg/ha<br>Observations: %{customdata[0]}<extra></extra>")
     fig.update_layout(height=350, margin=dict(l=0, r=15, t=12, b=0), xaxis_title="Average yield (kg/ha)", yaxis_title=None, plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)")
     fig.update_traces(textposition="outside", cliponaxis=False)
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 with right:
     st.markdown("**Average yield by province and crop**")
-    region_summary = filtered.groupby(["Province", "Crop"], as_index=False)["Yield (kg/ha)"].mean()
-    fig = px.bar(region_summary, x="Province", y="Yield (kg/ha)", color="Crop", barmode="group", text_auto=".0f")
+    region_summary = _yield_summary(filtered, ["Province", "Crop"])
+    fig = px.bar(region_summary, x="Province", y="Yield (kg/ha)", color="Crop", barmode="group", text_auto=".0f", custom_data=["observations"])
+    fig.update_traces(hovertemplate="%{x}<br>%{fullData.name}<br>Yield: %{y:,.0f} kg/ha<br>Observations: %{customdata[0]}<extra></extra>")
     fig.update_layout(height=350, margin=dict(l=0, r=15, t=12, b=0), xaxis_title=None, yaxis_title="Average yield (kg/ha)", plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)")
     fig.update_traces(textposition="outside", cliponaxis=False)
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+
+st.markdown("## Productivity gap analyzer")
+if is_demo_data:
+    st.info("Gap analysis is unavailable in synthetic demo mode. Load an approved agricultural dataset to compare observed areas.")
+else:
+    st.caption("Uses a cited, supplied benchmark only when crop, area, year, and season match. Otherwise, compare with observed peer areas; no benchmark is invented.")
+    gap_crops = sorted(filtered["Crop"].astype(str).unique())
+    gap_crop = st.selectbox("Crop for comparison", gap_crops, key="gap_crop")
+    gap_data = filtered[filtered["Crop"].astype(str) == gap_crop]
+    gap_areas = sorted(gap_data["Province"].astype(str).unique())
+    if not gap_areas:
+        st.info("No province-level observations are available for this crop.")
+    else:
+        gap_target = st.selectbox("Area to assess", gap_areas, key="gap_target")
+        target_rows = gap_data[gap_data["Province"].astype(str) == gap_target]
+        target_result = _yield_summary(target_rows).iloc[0]
+        matching_benchmarks = benchmarks.iloc[0:0]
+        can_match_benchmark = (
+            "Year" in target_rows.columns
+            and len(selected_years) == 1
+            and ("Season" not in target_rows.columns or len(selected_seasons) == 1)
+        )
+        if can_match_benchmark and not benchmarks.empty:
+            matching_benchmarks = benchmarks[
+                (benchmarks["Crop"] == gap_crop)
+                & (benchmarks["Year"] == selected_years[0])
+                & (benchmarks["Province"].isin([gap_target, "National"]))
+            ]
+            if "Season" in target_rows.columns:
+                matching_benchmarks = matching_benchmarks[
+                    matching_benchmarks["Season"] == selected_seasons[0]
+                ]
+            else:
+                matching_benchmarks = matching_benchmarks[matching_benchmarks["Season"] == ""]
+
+        benchmark_row = None
+        if not matching_benchmarks.empty:
+            area_benchmark = matching_benchmarks[matching_benchmarks["Province"] == gap_target]
+            national_benchmark = matching_benchmarks[matching_benchmarks["Province"] == "National"]
+            benchmark_row = area_benchmark.iloc[0] if not area_benchmark.empty else (
+                national_benchmark.iloc[0] if not national_benchmark.empty else None
+            )
+
+        if benchmark_row is not None:
+            reference_yield = float(benchmark_row["Benchmark yield (kg/ha)"])
+            gap_kg_ha = reference_yield - target_result["Yield (kg/ha)"]
+            gap_pct = gap_kg_ha / reference_yield * 100
+            gap_cols = st.columns(4)
+            gap_cols[0].metric(f"{gap_target} observed yield", f"{target_result['Yield (kg/ha)']:,.0f} kg/ha", f"n = {int(target_result['observations']):,}")
+            gap_cols[1].metric("Cited benchmark", f"{reference_yield:,.0f} kg/ha", str(benchmark_row["Province"]))
+            gap_cols[2].metric("Difference to benchmark", f"{gap_kg_ha:+,.0f} kg/ha")
+            gap_cols[3].metric("Gap vs benchmark", f"{gap_pct:.1f}%")
+            st.caption(
+                "The source citation and value are supplied locally and are not independently verified by this app."
+            )
+            st.link_button("Open cited benchmark source", str(benchmark_row["Source URL"]))
+        else:
+            if not benchmarks.empty and not can_match_benchmark:
+                st.info("To use a cited benchmark, select exactly one year and (when applicable) one season in the sidebar.")
+            elif not benchmarks.empty:
+                st.info("No cited benchmark matches this crop, area, year, and season. Showing an observed peer comparison instead.")
+            st.markdown("**Observed peer comparison (not an official benchmark)**")
+            peer_options = [area for area in gap_areas if area != gap_target]
+            if not peer_options:
+                st.info("No peer provinces are available. Load a matching cited benchmark or select more provinces.")
+            else:
+                gap_peers = st.multiselect("Peer reference areas", peer_options, default=peer_options, key="gap_peers")
+                if not gap_peers:
+                    st.info("Choose at least one peer area to calculate an observed reference.")
+                else:
+                    peer_rows = gap_data[gap_data["Province"].astype(str).isin(gap_peers)]
+                    peer_result = _yield_summary(peer_rows).iloc[0]
+                    gap_kg_ha = peer_result["Yield (kg/ha)"] - target_result["Yield (kg/ha)"]
+                    gap_pct = (
+                        gap_kg_ha / peer_result["Yield (kg/ha)"] * 100
+                        if peer_result["Yield (kg/ha)"] > 0 else None
+                    )
+                    gap_cols = st.columns(4)
+                    gap_cols[0].metric(f"{gap_target} observed yield", f"{target_result['Yield (kg/ha)']:,.0f} kg/ha", f"n = {int(target_result['observations']):,}")
+                    gap_cols[1].metric("Peer reference yield", f"{peer_result['Yield (kg/ha)']:,.0f} kg/ha", f"n = {int(peer_result['observations']):,}")
+                    gap_cols[2].metric("Difference to peer", f"{gap_kg_ha:+,.0f} kg/ha")
+                    gap_cols[3].metric("Gap vs peer reference", f"{gap_pct:.1f}%" if gap_pct is not None else "Not defined")
+                    st.caption(
+                        f"Peer areas: {', '.join(gap_peers)}. "
+                        "A positive difference means the assessed area is below the selected peers. "
+                        "This descriptive gap does not identify causes or imply that the peer yield is attainable everywhere."
+                    )
 
 st.markdown("## Input signals")
 if is_demo_data:
@@ -185,8 +430,9 @@ else:
     for column, label in zip(input_cols, ["Fertilizer", "Irrigation", "Improved seed"]):
         with column:
             if label in filtered.columns:
-                summary = filtered.groupby(["Crop", label], as_index=False)["Yield (kg/ha)"].mean()
-                fig = px.bar(summary, x=label, y="Yield (kg/ha)", color="Crop", barmode="group", text_auto=".0f")
+                summary = _yield_summary(filtered, ["Crop", label])
+                fig = px.bar(summary, x=label, y="Yield (kg/ha)", color="Crop", barmode="group", text_auto=".0f", custom_data=["observations"])
+                fig.update_traces(hovertemplate="%{x}<br>%{fullData.name}<br>Yield: %{y:,.0f} kg/ha<br>Observations: %{customdata[0]}<extra></extra>")
                 fig.update_layout(height=300, showlegend=False, margin=dict(l=0, r=0, t=12, b=0), xaxis_title=None, yaxis_title="kg/ha", plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)")
                 fig.update_traces(textposition="outside", cliponaxis=False)
                 st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
@@ -195,8 +441,74 @@ else:
 
 if "Land tenure" in filtered.columns:
     st.markdown("## Land access and yield by crop")
-    tenure = filtered.groupby(["Crop", "Land tenure"], as_index=False).agg(average_yield=("Yield (kg/ha)", "mean"), observations=("Yield (kg/ha)", "size"))
-    st.dataframe(tenure.sort_values(["Crop", "average_yield"], ascending=[True, False]).style.format({"average_yield": "{:,.0f}", "observations": "{:,.0f}"}), width="stretch", hide_index=True)
+    tenure = _yield_summary(filtered, ["Crop", "Land tenure"]).rename(columns={"Yield (kg/ha)": "Average yield (kg/ha)"})
+    st.dataframe(tenure.sort_values(["Crop", "Average yield (kg/ha)"], ascending=[True, False]).style.format({"Average yield (kg/ha)": "{:,.0f}", "observations": "{:,.0f}"}), width="stretch", hide_index=True)
+
+st.markdown("## District view")
+if "District" not in filtered.columns:
+    st.info("District-level results are not available in this dataset.")
+else:
+    district_summary = _yield_summary(filtered, ["Province", "District"])
+    st.dataframe(
+        district_summary.sort_values(["Province", "Yield (kg/ha)"], ascending=[True, False]).style.format(
+            {"Yield (kg/ha)": "{:,.0f}", "observations": "{:,.0f}"}
+        ),
+        width="stretch",
+        hide_index=True,
+    )
+    district_geojson, geojson_error = _district_geojson()
+    if geojson_error:
+        st.warning(geojson_error)
+    elif district_geojson is None:
+        st.caption("To enable the map, add `data/district_boundaries.geojson` with Rwanda district polygons and a district-name property.")
+    else:
+        map_crop = st.selectbox("Crop to map", sorted(filtered["Crop"].astype(str).unique()), key="district_map_crop")
+        map_summary = _yield_summary(filtered[filtered["Crop"].astype(str) == map_crop], ["District"])
+        property_name = next(
+            name for name in ("District", "district", "NAME_2", "name")
+            if all(name in feature.get("properties", {}) for feature in district_geojson["features"])
+        )
+        geojson_names = {
+            str(feature["properties"][property_name]).casefold()
+            for feature in district_geojson["features"]
+        }
+        map_summary = map_summary[map_summary["District"].astype(str).str.casefold().isin(geojson_names)]
+        if map_summary.empty:
+            st.warning("No district names in the filtered data match the supplied boundary file.")
+        else:
+            fig = px.choropleth(
+                map_summary,
+                geojson=district_geojson,
+                locations="District",
+                featureidkey=f"properties.{property_name}",
+                color="Yield (kg/ha)",
+                hover_name="District",
+                hover_data={"observations": True, "Yield (kg/ha)": ":,.0f"},
+                color_continuous_scale="Greens",
+            )
+            fig.update_geos(fitbounds="locations", visible=False)
+            fig.update_layout(height=520, margin=dict(l=0, r=0, t=10, b=0))
+            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+
+st.markdown("## Download data")
+download_cols = st.columns(2)
+download_cols[0].download_button(
+    "Download filtered observations (CSV)",
+    data=filtered.to_csv(index=False).encode("utf-8"),
+    file_name="agristat_filtered_observations.csv",
+    mime="text/csv",
+)
+summary_groups = [
+    column for column in ["Province", "Crop", "Season", "Year"]
+    if column in filtered.columns
+]
+download_summary = _yield_summary(filtered, summary_groups)
+download_cols[1].download_button(
+    "Download yield summary (CSV)",
+    data=download_summary.to_csv(index=False).encode("utf-8"),
+    file_name="agristat_yield_summary.csv",
+    mime="text/csv",
+)
 
 st.markdown('<div class="insight"><strong>Reading the dashboard:</strong> Compare yields within the same crop and season where possible. Group differences are descriptive and may reflect other factors; they do not establish causation.</div>', unsafe_allow_html=True)
 st.markdown('<div class="footer">AgriStat Rwanda · Public demo — no login required · Prepared for the NISR Big Data Hackathon · Demo data is illustrative until an official extract is loaded.</div>', unsafe_allow_html=True)

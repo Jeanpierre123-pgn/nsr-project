@@ -9,7 +9,13 @@ For the final submission, download an approved Agriculture Household Survey extr
 - AHS 2017 data dictionary: https://microdata.statistics.gov.rw/index.php/catalog/90/data_dictionary
 - AHS 2017 related materials: https://microdata.statistics.gov.rw/index.php/catalog/90/related_materials
 
-The loader requires at least these columns: `Province`, `Crop`, and `Yield (kg/ha)`. It also recognises `Season`, `Fertilizer`, `Irrigation`, `Improved seed`, and `Land tenure`.
+The loader requires `Province` and `Crop`, plus either `Yield (kg/ha)` or both `Production (kg)` and `Harvested area (ha)`. When production and area are supplied, yield summaries are calculated as total production divided by total harvested area. Otherwise, summaries are the mean of supplied farm-level yields. It also recognises `District`, `Season`, `Fertilizer`, `Irrigation`, `Improved seed`, and `Land tenure`.
+
+The productivity-gap view uses a matching cited benchmark when a `benchmarks.csv` file is provided; otherwise it compares the selected province with peer provinces in the same loaded dataset, crop, and filtered season. The peer comparison is not an official national benchmark. Supplied benchmarks need source citations but are not independently verified by the app.
+
+The optional `benchmarks.csv` file requires `Crop`, `Province`, `Year`, `Benchmark yield (kg/ha)`, and `Source URL`; `Season` is also required when the agricultural dataset has seasonal records. Use `National` for a national reference area. Each crop/area/year/season combination must be unique. Group summaries show contributing observation counts. Filtered records and yield summaries can be downloaded from the app.
+
+To display a district map, include a permitted-to-redistribute `district_boundaries.geojson` FeatureCollection in this folder. Each feature needs a district-name property named `District`, `district`, `NAME_2`, or `name`, matching the dataset values. Without boundaries, district summaries are still shown in a table.
 
 ## About the supplied ZIP files
 
