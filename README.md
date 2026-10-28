@@ -4,11 +4,14 @@ AgriStat Rwanda is a Streamlit dashboard for exploring agricultural productivity
 
 ## What it does
 
-- Shows average yield by crop and province.
-- Compares yield across fertilizer, irrigation and improved-seed practices.
+- Shows crop-specific average yields and compares the same crop across provinces.
+- Compares yield across reported fertilizer, irrigation and improved-seed groups when a dataset is loaded.
 - Filters the view by province, crop and season.
 - Includes a land-tenure summary and a clear data-source indicator.
-- Runs immediately with an illustrative demo dataset when no official extract is present.
+- Runs immediately with clearly labelled synthetic demo data when no dataset is present. Input comparisons are hidden in demo mode.
+- Reports unreadable, ambiguous, or structurally invalid input data instead of silently substituting demo observations.
+
+Yield differences across input groups are descriptive associations, not evidence that an input caused a yield change. Compare yields within the same crop, and consider season and other confounding factors.
 
 ## Run locally
 
@@ -31,9 +34,9 @@ This is a public read-only demo and does not require an account, password, or lo
 
 ## Load an NISR extract
 
-Place one `.csv` or `.xlsx` file in `data/` and refresh the app. The loader recognises these column names (case-insensitive): `Province`, `Crop`, `Yield (kg/ha)`, `Season`, `Fertilizer`, `Irrigation`, `Improved seed`, and `Land tenure`. The minimum required fields are `Province`, `Crop`, and `Yield (kg/ha)`.
+Place exactly one `.csv` or `.xlsx` file in `data/` and refresh the app. The loader recognises these column names (case-insensitive): `Province`, `Crop`, `Yield (kg/ha)`, `Season`, `Fertilizer`, `Irrigation`, `Improved seed`, and `Land tenure`. The minimum required fields are `Province`, `Crop`, and `Yield (kg/ha)`. Rows without a province, crop, or numeric yield are excluded with a warning.
 
-The demo view is intentionally labelled as illustrative and should not be treated as official statistics. The supplied webinar and DDI documentation remain the reference materials for dataset definitions and interpretation.
+Loaded files are labelled as unverified datasets; the app does not independently establish their origin or representativeness. The demo view is synthetic, intentionally labelled as illustrative, and should not be treated as official statistics or used to draw conclusions about farming practices. The supplied webinar and DDI documentation remain the reference materials for dataset definitions and interpretation.
 
 Before submission, follow [SUBMISSION_CHECKLIST.md](./SUBMISSION_CHECKLIST.md). The hackathon requires a public GitHub repository, a publicly accessible deployed app, documentation, a screen recording under three minutes, and the data file or an official data link.
 
