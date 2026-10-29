@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: smart-agroconnect-rwanda
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python Project.py/manage.py collectstatic --noinput && python Project.py/manage.py migrate
+    startCommand: gunicorn --chdir Project.py agroconnect.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEMO_LOGIN
+        value: "false"

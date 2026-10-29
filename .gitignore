@@ -11,3 +11,4 @@ demo/*.gif
 *.zip
 TEAM_DETAILS_PRIVATE.md
 Project.py/db.sqlite3
+Project.py/staticfiles/
