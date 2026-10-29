@@ -13,6 +13,13 @@ st.set_page_config(page_title="AgriStat Rwanda | Productivity intelligence", pag
 
 DATA_DIR = Path(__file__).parent / "data"
 ACCENT, INK, GOLD = "#1f7a5a", "#153b2e", "#d7a84d"
+DISTRICTS_BY_PROVINCE = {
+    "Kigali City": ["Gasabo", "Kicukiro", "Nyarugenge"],
+    "Northern": ["Burera", "Gakenke", "Gicumbi", "Musanze", "Rulindo"],
+    "Southern": ["Gisagara", "Huye", "Kamonyi", "Muhanga", "Nyamagabe", "Nyanza", "Nyaruguru", "Ruhango"],
+    "Western": ["Karongi", "Ngororero", "Nyabihu", "Nyamasheke", "Rubavu", "Rusizi", "Rutsiro"],
+    "Eastern": ["Bugesera", "Gatsibo", "Kayonza", "Kirehe", "Ngoma", "Nyagatare", "Rwamagana"],
+}
 
 st.markdown(f"""
 <style>
@@ -41,7 +48,7 @@ def _demo_data() -> pd.DataFrame:
         fertilizer, irrigation, improved_seed = rng.random() < .68, rng.random() < .24, rng.random() < .56
         base = {"Maize": 1900, "Beans": 980, "Cassava": 7200, "Rice": 3600, "Potatoes": 8700}[crop]
         multiplier = 1 + (.19 if fertilizer else 0) + (.12 if irrigation else 0) + (.16 if improved_seed else 0)
-        rows.append({"Province": province, "District": f"{province} district {rng.randint(1, 6)}", "Crop": crop, "Season": rng.choice(seasons), "Farm size (ha)": round(rng.uniform(.15, 3.8), 2), "Yield (kg/ha)": round(max(100, base * multiplier * rng.uniform(.72, 1.22))), "Fertilizer": "Yes" if fertilizer else "No", "Irrigation": "Yes" if irrigation else "No", "Improved seed": "Yes" if improved_seed else "No", "Land tenure": rng.choice(["Owned", "Rented", "Family land"])})
+        rows.append({"Province": province, "District": rng.choice(DISTRICTS_BY_PROVINCE[province]), "Crop": crop, "Season": rng.choice(seasons), "Farm size (ha)": round(rng.uniform(.15, 3.8), 2), "Yield (kg/ha)": round(max(100, base * multiplier * rng.uniform(.72, 1.22))), "Fertilizer": "Yes" if fertilizer else "No", "Irrigation": "Yes" if irrigation else "No", "Improved seed": "Yes" if improved_seed else "No", "Land tenure": rng.choice(["Owned", "Rented", "Family land"])})
     return pd.DataFrame(rows)
 
 
