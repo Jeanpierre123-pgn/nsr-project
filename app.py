@@ -28,6 +28,10 @@ st.markdown(f"""
 :root {{ --green: {ACCENT}; --ink: {INK}; --gold: {GOLD}; }}
 .stApp {{ background: #f7f9f5; color: var(--ink); }} [data-testid="stHeader"] {{ background: rgba(247,249,245,.88); }}
 [data-testid="stSidebar"] {{ background: #173d30; }} [data-testid="stSidebar"] * {{ color: #eef6ef !important; }} [data-testid="stSidebar"] .stCaption {{ color: #b9d4c4 !important; }}
+[data-testid="stSidebar"] [data-baseweb="select"] > div {{ align-items: center; display: flex; flex-wrap: wrap; gap: .28rem; min-height: 2.55rem; padding: .25rem .4rem; }}
+[data-testid="stSidebar"] [data-baseweb="tag"] {{ background: #2b7053 !important; border: 1px solid #74aa8b !important; border-radius: 999px !important; margin: .1rem !important; max-width: 100%; padding: .12rem .42rem !important; }}
+[data-testid="stSidebar"] [data-baseweb="tag"] span {{ color: #ffffff !important; font-size: .78rem !important; font-weight: 600 !important; line-height: 1.35 !important; }}
+[data-testid="stSidebar"] [data-baseweb="tag"] svg {{ fill: #d9f2df !important; }} [data-testid="stSidebar"] [role="listbox"] {{ background: #214d3d !important; }}
 .block-container {{ padding: 2.3rem 4rem 3rem; max-width: 1500px; }} h1, h2, h3 {{ color: var(--ink); letter-spacing: -.02em; }}
 h1 {{ font-family: 'Playfair Display', Georgia, serif; font-size: 3.2rem !important; margin-bottom: .3rem; }} h2 {{ font-size: 1.45rem !important; margin-top: 1rem; }} p, label, .stMarkdown {{ font-family: 'DM Sans', sans-serif; }}
 .eyebrow {{ color: var(--green); font: 700 .78rem 'DM Sans', sans-serif; letter-spacing: .15em; text-transform: uppercase; margin-bottom: .6rem; }} .subtitle {{ color: #557064; font-size: 1.05rem; margin-bottom: 1.8rem; }}
