@@ -292,7 +292,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -424,16 +424,66 @@ if workspace != "AgriStat Analytics":
                 "Use in Smart AgroConnect": "Longer historical baseline for productivity, market access and the post-harvest loss planner.",
                 "Link": "https://microdata.statistics.gov.rw/index.php/catalog/90",
             },
+            {
+                "Dataset": "VUP Household Questionnaire (local reference)",
+                "Verified coverage": "Household composition, education, disability and health coverage, employment, land use, transfers, agricultural/livestock income and food-related vulnerability questions.",
+                "Use in Smart AgroConnect": "Prototype support triage and referral planning; this is not an official VUP eligibility calculation.",
+                "Link": "",
+            },
         ]
         for source_item in sources:
             with st.container(border=True):
                 st.markdown(f"### {source_item['Dataset']}")
                 st.caption(f"Verified coverage: {source_item['Verified coverage']}")
                 st.write(source_item["Use in Smart AgroConnect"])
-                st.link_button("Open NISR dataset", source_item["Link"])
+                if source_item["Link"]:
+                    st.link_button("Open NISR dataset", source_item["Link"])
+                else:
+                    st.caption("Source reviewed locally; the questionnaire PDF is not bundled in the public repository.")
         st.markdown("### Data-use rule")
         st.write("Only publish approved public-use files or aggregated indicators. Do not commit restricted microdata, personal identifiers or downloaded catalog files to GitHub.")
         st.link_button("Browse the complete NISR catalog", "https://microdata.statistics.gov.rw/index.php/catalog")
+
+    elif workspace == "Support Targeting Planner":
+        st.markdown("Use household and agricultural signals to prepare a support referral for review.")
+        st.warning("Prototype only: this score does not decide VUP eligibility, replace official case management, or expose household personal data.")
+        support_cols = st.columns(3)
+        with support_cols[0]:
+            household_size = st.number_input("Household members", min_value=1, max_value=30, value=5, step=1, key="support_household_size")
+            land_m2 = st.number_input("Land available (m²)", min_value=0.0, value=800.0, step=100.0, key="support_land")
+        with support_cols[1]:
+            monthly_income = st.number_input("Estimated monthly income (RWF)", min_value=0.0, value=65000.0, step=5000.0, key="support_income")
+            agricultural_income = st.checkbox("Agriculture/livestock is an income source", value=True, key="support_agri_income")
+        with support_cols[2]:
+            food_risk = st.selectbox("Food-security concern", ["No reported concern", "Moderate concern", "High concern"], key="support_food_risk")
+            urgent_need = st.multiselect("Additional support signals", ["Person with disability", "No health insurance", "No current work", "Recent crop failure"], key="support_signals")
+
+        risk_points = 0
+        risk_points += 2 if household_size >= 8 else 1 if household_size >= 5 else 0
+        risk_points += 2 if land_m2 < 500 else 1 if land_m2 < 1000 else 0
+        risk_points += 2 if monthly_income < 50000 else 1 if monthly_income < 100000 else 0
+        risk_points += {"No reported concern": 0, "Moderate concern": 2, "High concern": 4}[food_risk]
+        risk_points += len(urgent_need)
+        if risk_points >= 7:
+            support_level = "Priority referral review"
+            st.error("Priority referral review: connect the household to the appropriate district social-protection or agricultural officer.")
+        elif risk_points >= 4:
+            support_level = "Follow-up assessment"
+            st.warning("Follow-up assessment: verify the household situation and identify the most relevant service.")
+        else:
+            support_level = "Routine advisory"
+            st.success("Routine advisory: provide agricultural information and monitor future needs.")
+        support_result = pd.DataFrame([{
+            "Household size": household_size,
+            "Land (m²)": round(land_m2, 1),
+            "Estimated income (RWF/month)": round(monthly_income),
+            "Agriculture income source": "Yes" if agricultural_income else "No",
+            "Food-security concern": food_risk,
+            "Additional signals": ", ".join(urgent_need) if urgent_need else "None",
+            "Review outcome": support_level,
+        }])
+        st.dataframe(support_result, width="stretch", hide_index=True)
+        st.download_button("Download referral review (CSV)", support_result.to_csv(index=False).encode("utf-8"), "support_referral_review.csv", "text/csv")
 
     elif workspace == "Loss & Storage Planner":
         st.markdown("Estimate post-harvest losses and choose a practical storage response before produce loses value.")
