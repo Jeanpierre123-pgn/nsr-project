@@ -76,7 +76,7 @@ def register(request):
 
 def demo_login(request):
     """Create a safe local demo account so judges can explore without registration."""
-    if not settings.DEBUG and not os.environ.get("ENABLE_DEMO_LOGIN"):
+    if not settings.DEMO_LOGIN_ENABLED:
         return HttpResponseForbidden(_("Demo access is disabled in this environment."))
     role = request.GET.get("role", Profile.Role.FARMER)
     if role not in Profile.Role.values:

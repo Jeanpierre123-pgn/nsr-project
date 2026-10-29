@@ -9,6 +9,7 @@
     <p class="hero-text">{% translate "A shared space for Rwanda's farmers, produce buyers and transporters to plan ahead, find one another and coordinate the next step." %}</p>
     <div class="hero-actions"><a class="button button-primary" href="{% url 'register' %}">{% translate "Join Smart AgroConnect" %} <span aria-hidden="true">→</span></a><a class="text-link" href="{% url 'market' %}">{% translate "Explore produce listings" %}</a></div>
     <p class="small-muted">{% translate "Free to explore · Create a role-based account to participate" %}</p>
+    <div class="notice-strip"><p><strong>{% translate "Try the platform" %}</strong><br>{% translate "Use a demo account to explore the workflows immediately." %}</p><p><a class="button button-secondary" href="{% url 'demo_login' %}?role=farmer">{% translate "Demo farmer" %}</a> <a class="button button-secondary" href="{% url 'demo_login' %}?role=buyer">{% translate "Demo buyer" %}</a> <a class="button button-secondary" href="{% url 'demo_login' %}?role=transporter">{% translate "Demo transporter" %}</a></p></div>
   </div>
   <div class="hero-art" aria-label="Illustration of connected fields and a harvest">
     <div class="sun"></div><div class="field field-back"></div><div class="field field-mid"></div><div class="field field-front"></div>

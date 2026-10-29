@@ -6,6 +6,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
+DEMO_LOGIN_ENABLED = os.environ.get(
+    "DJANGO_DEMO_LOGIN", "true" if DEBUG else "false"
+).lower() == "true"
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or secrets.token_urlsafe(50)
 
 if not DEBUG and not os.environ.get("DJANGO_SECRET_KEY"):
