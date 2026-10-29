@@ -180,7 +180,7 @@ def _load_benchmarks() -> pd.DataFrame:
     benchmarks["Source URL"] = benchmarks["Source URL"].astype("string").str.strip()
     if "Season" not in benchmarks.columns:
         benchmarks["Season"] = ""
-    else:
+    elif workspace == "My Profile":
         benchmarks["Season"] = benchmarks["Season"].fillna("").astype("string").str.strip()
     benchmarks["Benchmark yield (kg/ha)"] = pd.to_numeric(
         benchmarks["Benchmark yield (kg/ha)"], errors="coerce"
@@ -294,7 +294,7 @@ with st.sidebar:
         _sign_out()
     workspace = st.radio(
         "Workspace",
-        ["AgriStat Dashboard", "Marketplace", "Community", "Agri Assistant", "My Profile"],
+        ["AgriStat Dashboard", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"],
         key="workspace",
     )
     st.divider()
@@ -327,13 +327,63 @@ st.session_state.setdefault("market_listings", [
     {"Product": "Beans", "Quantity": "450 kg", "Location": "Huye", "Seller": "Demo farmer"},
 ])
 st.session_state.setdefault("community_posts", [])
+st.session_state.setdefault("crop_plans", [])
+st.session_state.setdefault("buyer_demands", [])
+st.session_state.setdefault("transport_jobs", [])
+st.session_state.setdefault("notifications", [])
 
 if workspace != "AgriStat Dashboard":
     st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
     st.title(workspace)
     st.caption(f"Working as {st.session_state.get('role', 'Demo user')} · Changes are kept in this demo session.")
 
-    if workspace == "Marketplace":
+    if workspace == "Operations":
+        st.markdown("Turn a harvest plan into a coordinated market and delivery workflow.")
+        role = st.session_state.get("role")
+        if role == "Farmer":
+            with st.form("crop_plan"):
+                crop = st.selectbox("Crop", ["Maize", "Beans", "Cassava", "Rice", "Potatoes"])
+                district = st.selectbox("Farm district", sorted({district for districts in DISTRICTS_BY_PROVINCE.values() for district in districts}))
+                area = st.number_input("Farm area (hectares)", min_value=0.1, value=1.0, step=0.1)
+                planting_date = st.date_input("Planting date")
+                if st.form_submit_button("Save crop plan", type="primary"):
+                    st.session_state["crop_plans"].insert(0, {"Crop": crop, "District": district, "Area (ha)": area, "Planting date": str(planting_date), "Status": "Planned"})
+                    st.session_state["notifications"].insert(0, "Crop plan saved successfully.")
+                    st.success("Crop plan saved. Add a marketplace listing when the harvest is ready.")
+            if st.session_state["crop_plans"]:
+                st.dataframe(pd.DataFrame(st.session_state["crop_plans"]), width="stretch", hide_index=True)
+        elif role == "Buyer":
+            with st.form("buyer_demand"):
+                product = st.selectbox("Produce needed", ["Maize", "Beans", "Cassava", "Rice", "Potatoes"])
+                quantity = st.number_input("Required quantity (kg)", min_value=1, value=500, step=50)
+                district = st.selectbox("Delivery district", sorted({district for districts in DISTRICTS_BY_PROVINCE.values() for district in districts}))
+                needed_by = st.date_input("Needed by")
+                if st.form_submit_button("Post buyer demand", type="primary"):
+                    st.session_state["buyer_demands"].insert(0, {"Product": product, "Quantity (kg)": quantity, "District": district, "Needed by": str(needed_by), "Status": "Open"})
+                    st.session_state["notifications"].insert(0, f"Buyer demand for {product} was posted.")
+                    st.success("Demand posted. Matching harvests are shown below.")
+            if st.session_state["buyer_demands"]:
+                st.dataframe(pd.DataFrame(st.session_state["buyer_demands"]), width="stretch", hide_index=True)
+            st.markdown("#### Matching harvests")
+            st.dataframe(pd.DataFrame(st.session_state["market_listings"]), width="stretch", hide_index=True)
+        else:
+            st.markdown("#### Delivery opportunities")
+            demands = st.session_state["buyer_demands"]
+            if not demands:
+                st.info("Open buyer demands will appear here.")
+            for index, demand in enumerate(demands):
+                with st.container(border=True):
+                    st.write(f"**{demand['Product']} · {demand['Quantity (kg)']:,} kg · {demand['District']}**")
+                    st.caption(f"Needed by {demand['Needed by']} · Status: {demand['Status']}")
+                    if demand["Status"] == "Open" and st.button("Claim delivery", key=f"claim_delivery_{index}"):
+                        demand["Status"] = "Transporter assigned"
+                        st.session_state["transport_jobs"].append(demand.copy())
+                        st.session_state["notifications"].insert(0, f"Delivery claimed for {demand['Product']}.")
+                        st.success("Delivery assigned to your transporter profile.")
+            if st.session_state["transport_jobs"]:
+                st.dataframe(pd.DataFrame(st.session_state["transport_jobs"]), width="stretch", hide_index=True)
+
+    elif workspace == "Marketplace":
         st.markdown("Connect harvests, buyers and transport opportunities in one place.")
         if st.session_state.get("role") == "Farmer":
             with st.form("new_listing"):
@@ -377,13 +427,18 @@ if workspace != "AgriStat Dashboard":
                 answer = "Start with the crop, area, season, expected quantity and target market. A local extension officer can confirm agronomic treatment and input decisions."
             st.success(answer)
 
-    else:
+    elif workspace == "My Profile":
         st.markdown("Your competition profile and demo access.")
         profile_cols = st.columns(3)
         profile_cols[0].metric("Role", st.session_state.get("role", "Demo"))
         profile_cols[1].metric("Marketplace listings", len(st.session_state["market_listings"]))
         profile_cols[2].metric("Community messages", len(st.session_state["community_posts"]))
+        st.metric("Notifications", len(st.session_state["notifications"]))
         st.info("For the public competition demo, actions are stored in your current Streamlit session. A persistent database can be added after choosing a production host.")
+        if st.session_state["notifications"]:
+            st.markdown("#### Notifications")
+            for notification in st.session_state["notifications"][:8]:
+                st.success(notification)
     st.stop()
 
 filtered = df[df["Province"].astype(str).isin(selected_provinces) & df["Crop"].astype(str).isin(selected_crops)].copy()
