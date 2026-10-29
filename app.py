@@ -292,7 +292,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -381,6 +381,20 @@ if workspace != "AgriStat Analytics":
                 st.dataframe(pd.DataFrame(st.session_state["transport_jobs"]), width="stretch", hide_index=True)
             else:
                 st.warning("No deliveries assigned yet. Open Operations to review opportunities.")
+
+    elif workspace == "Impact & Reports":
+        st.markdown("Evidence of the platform's agricultural and coordination impact.")
+        impact_cols = st.columns(4)
+        impact_cols[0].metric("Observations analysed", f"{len(df):,}")
+        impact_cols[1].metric("Provinces represented", int(df["Province"].nunique()))
+        impact_cols[2].metric("Districts represented", int(df["District"].nunique()) if "District" in df.columns else "N/A")
+        impact_cols[3].metric("Crops represented", int(df["Crop"].nunique()))
+        st.markdown("### Evidence from the selected agricultural data")
+        impact_summary = _yield_summary(df, ["Province", "Crop"]).sort_values("Yield (kg/ha)", ascending=False)
+        st.dataframe(impact_summary.head(15).style.format({"Yield (kg/ha)": "{:,.0f}", "observations": "{:,.0f}"}), width="stretch", hide_index=True)
+        report = impact_summary.to_csv(index=False).encode("utf-8")
+        st.download_button("Download impact report (CSV)", report, "smart_agroconnect_impact_report.csv", "text/csv", type="primary")
+        st.info("Competition message: Smart AgroConnect combines official-source agricultural analysis with role-based coordination for farmers, buyers and transporters.")
 
     elif workspace == "Operations":
         st.markdown("Turn a harvest plan into a coordinated market and delivery workflow.")
