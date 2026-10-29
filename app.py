@@ -13,6 +13,7 @@ st.set_page_config(page_title="AgriStat Rwanda | Productivity intelligence", pag
 
 DATA_DIR = Path(__file__).parent / "data"
 ACCENT, INK, GOLD = "#1f7a5a", "#153b2e", "#d7a84d"
+NISR_LOGO_URL = "https://www.statistics.gov.rw/sites/default/files/logo-rwanda-nisr-transparent_0.png"
 DISTRICTS_BY_PROVINCE = {
     "Kigali City": ["Gasabo", "Kicukiro", "Nyarugenge"],
     "Northern": ["Burera", "Gakenke", "Gicumbi", "Musanze", "Rulindo"],
@@ -31,6 +32,9 @@ st.markdown(f"""
 h1 {{ font-family: 'Playfair Display', Georgia, serif; font-size: 3.2rem !important; margin-bottom: .3rem; }} h2 {{ font-size: 1.45rem !important; margin-top: 1rem; }} p, label, .stMarkdown {{ font-family: 'DM Sans', sans-serif; }}
 .eyebrow {{ color: var(--green); font: 700 .78rem 'DM Sans', sans-serif; letter-spacing: .15em; text-transform: uppercase; margin-bottom: .6rem; }} .subtitle {{ color: #557064; font-size: 1.05rem; margin-bottom: 1.8rem; }}
 .source-pill {{ background: #e5f1e7; border: 1px solid #cce2d2; border-radius: 999px; color: #216543; display: inline-block; font: 600 .78rem 'DM Sans', sans-serif; padding: .38rem .75rem; }}
+.nisr-brandbar {{ align-items: center; background: linear-gradient(100deg, #ffffff 0%, #eef7f0 100%); border: 1px solid #dce9df; border-radius: 18px; display: flex; gap: 1rem; margin: -.4rem 0 1.4rem; padding: .8rem 1.1rem; box-shadow: 0 8px 24px rgba(21,59,46,.05); }}
+.nisr-brandbar img {{ max-height: 44px; max-width: 180px; object-fit: contain; }} .nisr-brandbar-copy {{ border-left: 1px solid #cddfd1; color: #557064; font: 600 .8rem 'DM Sans', sans-serif; letter-spacing: .08em; padding-left: 1rem; text-transform: uppercase; }}
+.page-divider {{ border-top: 3px solid var(--gold); margin: -.7rem 0 1.2rem; opacity: .8; }}
 div[data-testid="stMetric"] {{ background: white; border: 1px solid #e3ebe3; border-radius: 16px; padding: 1.1rem 1.25rem; box-shadow: 0 5px 18px rgba(21,59,46,.045); }}
 div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] p, div[data-testid="stMetricLabel"] * {{ color: #557064 !important; opacity: 1 !important; font-weight: 600 !important; }}
 div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {{ color: var(--ink) !important; opacity: 1 !important; font-weight: 700 !important; }}
@@ -57,9 +61,11 @@ if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
 if not st.session_state["authenticated"]:
+    st.sidebar.image(NISR_LOGO_URL, width=180)
     st.sidebar.markdown("## Smart AgroConnect")
     st.sidebar.caption("Rwanda farmer, buyer and transporter network")
     st.sidebar.info("Use a demo role to explore the competition prototype.")
+    st.markdown(f'<div class="nisr-brandbar"><img src="{NISR_LOGO_URL}" alt="NISR logo"><div class="nisr-brandbar-copy">National statistics · agriculture innovation</div></div>', unsafe_allow_html=True)
     st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
     st.title("A shared digital space for Rwanda’s agricultural network.")
     st.markdown("Choose a demo role to enter the working prototype. No password is required for the competition demo.")
@@ -287,6 +293,7 @@ if df.empty:
 is_demo_data = source.startswith("Illustrative synthetic demo data")
 
 with st.sidebar:
+    st.image(NISR_LOGO_URL, width=180)
     st.markdown("## AgriStat Rwanda")
     st.caption("Agricultural productivity intelligence")
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
@@ -323,6 +330,9 @@ with st.sidebar:
         st.caption("Synthetic demo mode: illustrative values only; not official statistics.")
     else:
         st.caption("Loaded local file: its origin and representativeness have not been verified by the app.")
+
+
+st.markdown(f'<div class="nisr-brandbar"><img src="{NISR_LOGO_URL}" alt="NISR logo"><div class="nisr-brandbar-copy">NISR-aligned agricultural intelligence · Smart AgroConnect Rwanda</div></div><div class="page-divider"></div>', unsafe_allow_html=True)
 
 
 st.session_state.setdefault("market_listings", [
