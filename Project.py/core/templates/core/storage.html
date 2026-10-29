@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Storage records | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "After the harvest" %}</p><h1>{% translate "Storage records" %}</h1><p>{% translate "Log quantities and inspections. Reminders use your own configured thresholds and do not assess food safety or prove spoilage." %}</p></div><a class="button button-primary" href="{% url 'storage_create' %}">+ {% translate "Record produce" %}</a></section>
+{% for record, reminders in alerts %}<div class="notice-strip warning"><span class="notice-icon">!</span><p><strong>{{ record.crop_name }}</strong> · {% for reminder in reminders %}{% translate reminder %}{% if not forloop.last %}, {% endif %}{% endfor %}. {% translate "This is a reminder only." %}</p></div>{% endfor %}
+<section class="content-panel">{% for record in records %}<div class="list-row"><div><strong>{{ record.crop_name }} · {{ record.quantity_remaining }} {{ record.quantity_unit }}</strong><span>{% translate "Stored at" %} {{ record.storage_location }} {% translate "since" %} {{ record.storage_start_date|date:"d M Y" }} · {% translate "configured period" %} {{ record.max_storage_days }} {% translate "days" %}</span><span>{% translate "Last inspection" %}: {{ record.last_inspection_date|date:"d M Y"|default:"—" }}{% if record.inspection_notes %} · {{ record.inspection_notes }}{% endif %}</span></div><a class="button button-secondary" href="{% url 'storage_inspect' record.pk %}">{% translate "Record inspection" %}</a></div>{% empty %}<p class="empty-state">{% translate "No harvested produce has been recorded yet." %}</p>{% endfor %}</section>
+{% endblock %}

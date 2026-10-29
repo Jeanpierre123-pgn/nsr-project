@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate title %} | Smart AgroConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "Manage your records" %}</p><h1>{% translate title %}</h1><p>{% translate intro %}</p></div><a class="button button-primary" href="{% url create_url %}">+ {% translate "Add new" %}</a></section>
+<section class="content-panel">
+  {% for record in records %}
+    <div class="list-row record-row">
+      <div>
+        {% if record.crop_name %}<strong>{{ record.crop_name }}{% if record.variety %} · {{ record.variety }}{% endif %}</strong>
+          <span>{{ record.farm.name }} · {% translate "planted" %} {{ record.planting_date|date:"d M Y" }} · {% translate "expected" %} {{ record.expected_quantity }} {{ record.quantity_unit }}</span>
+          <span>{% translate "Estimated harvest" %}: {{ record.estimated_harvest_date|date:"d M Y" }} · {% translate record.estimate_status %}</span>
+        {% elif record.product_name and record.expected_available_date %}<strong>{{ record.product_name }} · {{ record.quantity }} {{ record.quantity_unit }}</strong>
+          <span>{{ record.district }} · {% translate "expected" %} {{ record.expected_available_date|date:"d M Y" }} · {% translate record.get_status_display %}</span>
+          <span>{% if record.price_per_unit %}{{ record.price_per_unit }} FRW / {{ record.quantity_unit }}{% else %}{% translate "Price negotiable" %}{% endif %} · {% translate record.get_delivery_preference_display %}</span>
+        {% elif record.product_name and record.needed_by_date %}<strong>{{ record.product_name }} · {{ record.required_quantity }} {{ record.quantity_unit }}</strong>
+          <span>{% translate "Needed by" %} {{ record.needed_by_date|date:"d M Y" }}{% if record.district %} · {{ record.district }}{% endif %} · {% translate record.get_status_display %}</span>
+        {% else %}<strong>{{ record.name }}</strong><span>{{ record.district }}{% if record.sector %} · {{ record.sector }}{% endif %}{% if record.size_hectares %} · {{ record.size_hectares }} ha{% endif %}</span>{% endif %}
+      </div>
+      <div class="row-aside">{% if record.crop_name %}<span class="status-chip">{% translate record.get_stage_display %}</span>{% endif %}<a class="button button-secondary" href="{% url edit_url record.pk %}">{% translate "Edit" %}</a></div>
+    </div>
+  {% empty %}<p class="empty-state">{% translate empty_text %}</p>{% endfor %}
+</section>
+{% endblock %}

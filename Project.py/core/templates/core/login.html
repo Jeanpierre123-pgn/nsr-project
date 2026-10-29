@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Log in | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="form-layout">
+  <div class="form-aside"><p class="eyebrow">{% translate "Welcome back" %}</p><h1>{% translate "Your next step starts here." %}</h1><p>{% translate "Check crop records, market opportunities and your latest updates." %}</p></div>
+  <div class="form-card"><h2>{% translate "Log in" %}</h2><form method="post">{% csrf_token %}{{ form.as_p }}{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}<button class="button button-primary button-full" type="submit">{% translate "Log in" %}</button></form><p class="form-footnote">{% translate "New to the network?" %} <a href="{% url 'register' %}">{% translate "Create an account" %}</a></p></div>
+</section>
+{% endblock %}

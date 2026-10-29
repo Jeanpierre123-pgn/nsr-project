@@ -1,0 +1,7 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Alerts | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "Updates for you" %}</p><h1>{% translate "Notifications" %}</h1><p>{% translate "Platform messages and reminders are shown here." %}</p></div><form method="post">{% csrf_token %}<button class="button button-secondary" type="submit">{% translate "Mark all read" %}</button></form></section>
+<section class="content-panel">{% for item in records %}<div class="list-row"><div><strong>{{ item.title }}</strong><span>{{ item.message }}</span><span>{{ item.created_at|date:"d M Y, H:i" }}{% if item.is_read %} · {% translate "Read" %}{% else %} · {% translate "New" %}{% endif %}</span></div></div>{% empty %}<p class="empty-state">{% translate "No notifications yet." %}</p>{% endfor %}</section>
+{% endblock %}

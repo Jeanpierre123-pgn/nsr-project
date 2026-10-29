@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Farm finances | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "Track the numbers" %}</p><h1>{% translate "Farm finances" %}</h1><p>{% translate "Estimates are based only on expenses you enter and delivered orders with agreed prices." %}</p></div></section>
+<div class="stat-grid"><article class="stat-card"><span>{% translate "Recorded costs" %}</span><strong>{{ costs|floatformat:0 }} <small>FRW</small></strong></article><article class="stat-card"><span>{% translate "Delivered-order revenue" %}</span><strong>{{ revenue|floatformat:0 }} <small>FRW</small></strong></article><article class="stat-card"><span>{% translate "Estimated profit / loss" %}</span><strong>{{ profit|floatformat:0 }} <small>FRW</small></strong></article></div>
+<div class="dashboard-grid"><section class="content-panel"><h2>{% translate "Add an expense" %}</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button button-primary" type="submit">{% translate "Record expense" %}</button></form></section><section class="content-panel"><h2>{% translate "Recent expenses" %}</h2>{% for expense in expenses %}<div class="list-row"><div><strong>{{ expense.category }} · {{ expense.amount|floatformat:0 }} FRW</strong><span>{{ expense.expense_date|date:"d M Y" }}{% if expense.farm %} · {{ expense.farm.name }}{% endif %}</span></div></div>{% empty %}<p class="empty-state">{% translate "No expenses recorded." %}</p>{% endfor %}</section></div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Order agreements | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "Market agreements" %}</p><h1>{% translate "Orders" %}</h1><p>{% translate "Proposed prices are separate from agreed prices. Each order records its progress from request through delivery." %}</p></div><a class="button button-secondary" href="{% url 'market' %}">{% translate "Browse marketplace" %}</a></section>
+{% for order in orders %}
+<article class="content-panel order-card"><div class="order-heading"><div><p class="eyebrow">{% translate "Order" %} #{{ order.pk }} · {{ order.created_at|date:"d M Y" }}</p><h2>{{ order.listing.product_name }} · {{ order.quantity }} {{ order.listing.quantity_unit }}</h2></div><span class="status-chip">{% translate order.get_status_display %}</span></div>
+<div class="order-details"><span><small>{% if user.profile.role == "buyer" %}{% translate "Farmer" %}{% else %}{% translate "Buyer" %}{% endif %}</small><strong>{% if user.profile.role == "buyer" %}{{ order.farmer.user.get_full_name|default:order.farmer.user.username }}{% else %}{{ order.buyer.user.get_full_name|default:order.buyer.user.username }}{% endif %}</strong></span><span><small>{% translate "Proposed price" %}</small><strong>{% if order.proposed_unit_price %}{{ order.proposed_unit_price }} FRW / {{ order.listing.quantity_unit }}{% else %}{% translate "To agree" %}{% endif %}</strong></span><span><small>{% translate "Agreed price" %}</small><strong>{% if order.agreed_unit_price != None %}{{ order.agreed_unit_price }} FRW / {{ order.listing.quantity_unit }} · {% translate "Total" %} {{ order.total_amount }} FRW{% else %}{% translate "Not agreed" %}{% endif %}</strong></span><span><small>{% translate "Collection" %}</small><strong>{{ order.collection_date|date:"d M Y" }} · {{ order.delivery_location }}</strong></span></div>
+<div class="order-actions">
+{% if user.profile.role == "farmer" and order.status == "pending" %}
+<form method="post" action="{% url 'order_action' order.pk 'accept' %}">{% csrf_token %}<button class="button button-secondary" type="submit">{% translate "Accept request" %}</button></form>
+<form method="post" action="{% url 'order_action' order.pk 'reject' %}">{% csrf_token %}<button class="button button-quiet" type="submit">{% translate "Decline" %}</button></form>
+{% elif user.profile.role == "farmer" and order.status == "accepted" %}
+<form class="inline-form" method="post" action="{% url 'order_action' order.pk 'confirm' %}">{% csrf_token %}<label>{% translate "Agreed FRW / unit" %}<input required type="number" min="0" step="1" name="agreed_unit_price"></label><button class="button button-primary" type="submit">{% translate "Confirm agreement" %}</button></form>
+{% elif user.profile.role == "farmer" and order.status == "confirmed" %}
+<form method="post" action="{% url 'order_action' order.pk 'ready' %}">{% csrf_token %}<button class="button button-primary" type="submit">{% translate "Mark ready for collection" %}</button></form>
+{% endif %}
+{% if user.profile.role == "buyer" and order.status == "pending" or user.profile.role == "buyer" and order.status == "accepted" or user.profile.role == "buyer" and order.status == "confirmed" %}
+<form method="post" action="{% url 'order_action' order.pk 'cancel' %}">{% csrf_token %}<button class="button button-quiet" type="submit">{% translate "Cancel request" %}</button></form>
+{% endif %}
+{% if order.status == "confirmed" or order.status == "ready" %}<a class="button button-secondary" href="{% url 'transport_create' order.pk %}">{% translate "Arrange transport" %}</a>{% endif %}
+{% if not order.status == "pending" and not order.status == "accepted" and not order.status == "confirmed" and not order.status == "ready" %}<span class="small-muted">{% translate "No actions available at this stage." %}</span>{% endif %}
+</div></article>
+{% empty %}<section class="content-panel empty-wide"><h2>{% translate "No orders yet" %}</h2><p>{% translate "When buyers request produce, the agreement and delivery steps will appear here." %}</p><a class="button button-secondary" href="{% url 'market' %}">{% translate "Explore produce" %}</a></section>{% endfor %}
+{% endblock %}

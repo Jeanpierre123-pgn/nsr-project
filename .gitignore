@@ -10,3 +10,4 @@ demo/*.gif
 *.pdf
 *.zip
 TEAM_DETAILS_PRIVATE.md
+Project.py/db.sqlite3

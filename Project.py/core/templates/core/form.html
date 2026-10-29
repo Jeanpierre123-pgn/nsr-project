@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate title %} | Smart AgroConnect{% endblock %}
+{% block content %}
+<section class="form-layout">
+  <div class="form-aside"><p class="eyebrow">Smart AgroConnect</p><h1>{% translate title %}</h1><p>{% if intro %}{% translate intro %}{% else %}{% translate "Add clear, up-to-date information to help others coordinate with you." %}{% endif %}</p></div>
+  <div class="form-card"><h2>{% translate title %}</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button button-primary button-full" type="submit">{% if submit_label %}{% translate submit_label %}{% else %}{% translate "Save changes" %}{% endif %}</button></form></div>
+</section>
+<script>
+  const roleField = document.getElementById("id_role");
+  const vehicleFields = ["id_vehicle_type", "id_vehicle_capacity"];
+  if (roleField) {
+    const updateVehicleFields = () => {
+      vehicleFields.forEach((fieldId) => {
+        const field = document.getElementById(fieldId);
+        if (field) field.closest("p").hidden = roleField.value !== "transporter";
+      });
+    };
+    roleField.addEventListener("change", updateVehicleFields);
+    updateVehicleFields();
+  }
+</script>
+{% endblock %}

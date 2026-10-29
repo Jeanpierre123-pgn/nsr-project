@@ -1,0 +1,1200 @@
+#
+msgid ""
+msgstr ""
+"Language: rw\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Smart AgroConnect Rwanda"
+msgstr "Smart AgroConnect Rwanda"
+
+msgid "Smart AgroConnect Rwanda | From farm to market"
+msgstr "Smart AgroConnect Rwanda | Kuva mu murima kugera ku isoko"
+
+msgid "Smart AgroConnect Rwanda links farmers, buyers and transporters."
+msgstr ""
+"Smart AgroConnect Rwanda ihuza abahinzi, abaguzi n'abatwara umusaruro."
+
+msgid "Main navigation"
+msgstr "Ibice by'ingenzi"
+
+msgid "Marketplace"
+msgstr "Isoko ry'umusaruro"
+
+msgid "Weather"
+msgstr "Ikirere"
+
+msgid "Dashboard"
+msgstr "Incamake"
+
+msgid "Farms"
+msgstr "Imirima"
+
+msgid "My listings"
+msgstr "Ibyo natangaje"
+
+msgid "Storage"
+msgstr "Ububiko"
+
+msgid "Farm finances"
+msgstr "Imari y'ubuhinzi"
+
+msgid "My demands"
+msgstr "Ibyo nkeneye"
+
+msgid "Matches"
+msgstr "Ibihuye n'ibyo nkeneye"
+
+msgid "Orders"
+msgstr "Komande"
+
+msgid "Transport"
+msgstr "Ubwikorezi"
+
+msgid "Alerts"
+msgstr "Ubutumwa"
+
+msgid "Log out"
+msgstr "Sohoka"
+
+msgid "Log in"
+msgstr "Injira"
+
+msgid "Join the network"
+msgstr "Injira muri uru rubuga"
+
+msgid "Choose language"
+msgstr "Hitamo ururimi"
+
+msgid "Plan harvests · Find markets · Coordinate delivery"
+msgstr "Tegura isarura · Shaka amasoko · Huza ubwikorezi"
+
+msgid "A better-connected harvest"
+msgstr "Isarura rihuza abantu"
+
+msgid "Grow with a plan."
+msgstr "Hinga uteguye."
+
+msgid "Sell with confidence."
+msgstr "Gurisha wizeye."
+
+msgid ""
+"A shared space for Rwanda's farmers, produce buyers and transporters to plan"
+" ahead, find one another and coordinate the next step."
+msgstr ""
+"Urubuga ruhuza abahinzi, abaguzi b'umusaruro n'abawutwara mu Rwanda kugira "
+"ngo bategure hakiri kare, bahurizwe hamwe kandi bategure intambwe ikurikira."
+
+msgid "Join Smart AgroConnect"
+msgstr "Injira muri Smart AgroConnect"
+
+msgid "Explore produce listings"
+msgstr "Reba umusaruro watangajwe"
+
+msgid "Free to explore · Create a role-based account to participate"
+msgstr ""
+"Kureba ni ubuntu · Fungura konti uhitamo uruhare rwawe kugira ngo witabire"
+
+msgid "From planting to collection"
+msgstr "Kuva ku gutera kugeza ku gutwara umusaruro"
+
+msgid "One connected workflow"
+msgstr "Urugendo rumwe ruhuza ibikorwa"
+
+msgid "Make every harvest easier to plan."
+msgstr "Tegura isarura ryose mu buryo bworoshye."
+
+msgid ""
+"Start with the practical tools. Add trusted local guidance and services as "
+"your network grows."
+msgstr ""
+"Tangira ukoresheje ibikoresho bifatika. Uko urubuga ruguka, wongeremo inama "
+"n'ibindi bikorwa byizewe byo hafi."
+
+msgid "Track crops"
+msgstr "Kurikirana ibihingwa"
+
+msgid ""
+"Record farms, planting dates and expected growing periods. Keep harvest "
+"dates clearly labelled as estimates."
+msgstr ""
+"Andika imirima, amatariki yo gutera n'igihe ibihingwa biteganyijwe kumara "
+"bikura. Erekana neza ko amatariki yo gusarura ari ibigereranyo."
+
+msgid "Meet the market"
+msgstr "Hura n'isoko"
+
+msgid ""
+"Publish expected produce or future demand and discover potential matches "
+"before collection day."
+msgstr ""
+"Tangaza umusaruro uteganyijwe cyangwa ibyo uzakenera, maze umenye "
+"abafatanyabikorwa bashoboka mbere y'umunsi wo gutwara."
+
+msgid "Coordinate delivery"
+msgstr "Huza ibikorwa byo kugeza umusaruro"
+
+msgid ""
+"Manage order agreements and let registered transporters respond to "
+"collection requests."
+msgstr ""
+"Genzura amasezerano ya komande kandi wemere abatwara ibicuruzwa "
+"biyandikishije gusubiza ibyifuzo byo gutwara."
+
+msgid "Keep useful records"
+msgstr "Bika inyandiko z'ingirakamaro"
+
+msgid ""
+"Log storage inspections and farm costs to support better decisions over "
+"time."
+msgstr ""
+"Andika igenzura ry'ububiko n'ibiciro by'ubuhinzi kugira ngo bifashe gufata "
+"ibyemezo byiza."
+
+msgid "Built for real-world decisions."
+msgstr "Yagenewe gufasha gufata ibyemezo bifatika."
+
+msgid ""
+"Harvest dates are estimates, matches are opportunities—not guarantees—and "
+"storage reminders do not certify produce safety."
+msgstr ""
+"Amatariki yo gusarura ni ibigereranyo, ibihuye ni amahirwe atari isezerano, "
+"kandi ibyibutsa iby'ububiko ntibyemeza ko umusaruro utekanye."
+
+msgid "Create account"
+msgstr "Fungura konti"
+
+msgid "Save inspection"
+msgstr "Bika igenzura"
+
+msgid "Post transport request"
+msgstr "Ohereza icyifuzo cy'ubwikorezi"
+
+msgid "Request %(product)s"
+msgstr "Saba %(product)s"
+
+msgid "Send order request"
+msgstr "Ohereza icyifuzo cya komande"
+
+msgid "Save storage record"
+msgstr "Bika inyandiko y'ububiko"
+
+msgid "Enter the vehicle type you can provide."
+msgstr "Andika ubwoko bw'ikinyabiziga ushobora gutanga."
+
+msgid "Enter your vehicle capacity in kilograms."
+msgstr "Andika ubushobozi bw'ikinyabiziga cyawe mu kilo."
+
+msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr "Ni ngombwa. Nturenze inyuguti 150. Koresha inyuguti, imibare na @/./+/-/_ gusa."
+
+msgid "Your password can’t be too similar to your other personal information."
+msgstr "Ijambo ry'ibanga ntirigomba gusa cyane n'andi makuru yawe bwite."
+
+msgid "Your password must contain at least %(min_length)d character."
+msgid_plural "Your password must contain at least %(min_length)d characters."
+msgstr[0] "Ijambo ry'ibanga rigomba kugira nibura inyuguti %(min_length)d."
+msgstr[1] "Ijambo ry'ibanga rigomba kugira nibura inyuguti %(min_length)d."
+
+msgid "Your password can’t be a commonly used password."
+msgstr "Ijambo ry'ibanga ntirigomba kuba irikoreshwa na benshi."
+
+msgid "Your password can’t be entirely numeric."
+msgstr "Ijambo ry'ibanga ntirigomba kuba rigizwe n'imibare gusa."
+
+msgid "Enter the same password as before, for verification."
+msgstr "Ongera wandike ijambo ry'ibanga risa n'irya mbere kugira ngo ryemezwe."
+
+msgid ""
+"Set the requested quantity, proposed price, collection date, and delivery "
+"location. Prices are proposals until agreed."
+msgstr ""
+"Andika ingano ukeneye, igiciro utanze, itariki yo gutwara n'aho bigomba "
+"kugezwa. Ibiciro ni ibyifuzo kugeza mwumvikanyeho."
+
+msgid ""
+"Provide the pickup location, destination, pickup date, and optional cost."
+msgstr ""
+"Andika aho bazakura umusaruro, aho bawujyana, itariki yo kuwutwara n'ikiguzi"
+" ushaka kugaragaza."
+
+msgid "Create your account"
+msgstr "Fungura konti yawe"
+
+msgid "Join as a farmer, buyer or transporter."
+msgstr "Injira nk'umuhinzi, umuguzi cyangwa umutwara w'ibicuruzwa."
+
+msgid "Record harvested produce"
+msgstr "Andika umusaruro wasaruwe"
+
+msgid ""
+"Reminders use your configured dates and are not food-safety or spoilage "
+"assessments."
+msgstr ""
+"Ibyibutsa bikurikiza amatariki washyizeho; ntibisuzuma umutekano w'ibiribwa "
+"cyangwa ngo byemeze ko byangiritse."
+
+msgid "Record storage inspection"
+msgstr "Andika igenzura ry'ububiko"
+
+msgid "Add clear, up-to-date information to help others coordinate with you."
+msgstr ""
+"Tanga amakuru asobanutse kandi agezweho kugira ngo abandi bashobore gukorana"
+" nawe."
+
+msgid "Save changes"
+msgstr "Bika ibyahinduwe"
+
+msgid "Welcome back"
+msgstr "Urakaza neza nanone"
+
+msgid "Your next step starts here."
+msgstr "Intambwe ikurikira itangirira hano."
+
+msgid "Check crop records, market opportunities and your latest updates."
+msgstr "Reba inyandiko z'ibihingwa, amahirwe ku isoko n'ubutumwa bushya."
+
+msgid "Log in | Smart AgroConnect"
+msgstr "Injira | Smart AgroConnect"
+
+msgid "New to the network?"
+msgstr "Ni ubwa mbere ukoresha uru rubuga?"
+
+msgid "Create an account"
+msgstr "Fungura konti"
+
+msgid "Dashboard | Smart AgroConnect"
+msgstr "Incamake | Smart AgroConnect"
+
+msgid "Your workspace"
+msgstr "Umwanya wawe"
+
+msgid "Hello"
+msgstr "Muraho"
+
+msgid "Platform overview"
+msgstr "Incamake y'urubuga"
+
+msgid "Welcome to your Smart AgroConnect dashboard."
+msgstr "Murakaza neza mu ncamake ya Smart AgroConnect."
+
+msgid "administrator"
+msgstr "umuyobozi"
+
+msgid "Transporter"
+msgstr "Umutwara w'ibicuruzwa"
+
+msgid "Farmers"
+msgstr "Abahinzi"
+
+msgid "Buyers"
+msgstr "Abaguzi"
+
+msgid "Transporters"
+msgstr "Abatwara ibicuruzwa"
+
+msgid "Active listings"
+msgstr "Ibyatangajwe biriho"
+
+msgid "Administration"
+msgstr "Ubuyobozi"
+
+msgid "Counts reflect records currently stored in the platform."
+msgstr "Iyi mibare igaragaza inyandiko zibitse kuri uru rubuga."
+
+msgid "Open Django administration"
+msgstr "Fungura ubuyobozi bwa Django"
+
+msgid "Registered farms"
+msgstr "Imirima yiyandikishije"
+
+msgid "View farms"
+msgstr "Reba imirima"
+
+msgid "Crop records"
+msgstr "Inyandiko z'ibihingwa"
+
+msgid "Manage listings"
+msgstr "Genzura ibyatangajwe"
+
+msgid "Crop outlook"
+msgstr "Iteganyagihe ry'ibihingwa"
+
+msgid "Add crop"
+msgstr "Ongeraho igihingwa"
+
+msgid "planted"
+msgstr "cyatewe"
+
+msgid "Record a farm and crop to see your harvest calendar."
+msgstr "Andika umurima n'igihingwa kugira ngo ubone kalendari y'isarura."
+
+msgid "Recent orders"
+msgstr "Komande ziheruka"
+
+msgid "All orders"
+msgstr "Komande zose"
+
+msgid "Buyer"
+msgstr "Umuguzi"
+
+msgid "Buyer requests will appear here."
+msgstr "Ibyifuzo by'abaguzi bizagaragara hano."
+
+msgid "Storage reminders"
+msgstr "Ibyibutsa iby'ububiko"
+
+msgid "Review"
+msgstr "Ongera urebe"
+
+msgid "Open demands"
+msgstr "Ibyifuzo bigitegereje"
+
+msgid "Manage demands"
+msgstr "Genzura ibyo ukeneye"
+
+msgid "Market"
+msgstr "Isoko"
+
+msgid "Explore"
+msgstr "Reba"
+
+msgid "Browse produce"
+msgstr "Shakisha umusaruro"
+
+msgid "Potential matches"
+msgstr "Ibihuye bishoboka"
+
+msgid "View matches"
+msgstr "Reba ibihuye"
+
+msgid "Post a demand"
+msgstr "Tangaza ibyo ukeneye"
+
+msgid "Farmer"
+msgstr "Umuhinzi"
+
+msgid "Your order agreements will appear here."
+msgstr "Amasezerano ya komande zawe azagaragara hano."
+
+msgid "Open requests"
+msgstr "Ibyifuzo bigitegereje"
+
+msgid "Browse requests"
+msgstr "Reba ibyifuzo"
+
+msgid "Vehicle"
+msgstr "Ikinyabiziga"
+
+msgid "Not specified"
+msgstr "Ntabwo byagaragajwe"
+
+msgid "Capacity"
+msgstr "Ubushobozi bwo gutwara"
+
+msgid "Your assignments"
+msgstr "Imirimo wagenewe"
+
+msgid "Transport board"
+msgstr "Urubuga rw'ubwikorezi"
+
+msgid "Order"
+msgstr "Komande"
+
+msgid "Claim a compatible request from the transport board."
+msgstr "Hitamo icyifuzo gihuye n'ubushobozi bwawe ku rubuga rw'ubwikorezi."
+
+msgid "New updates"
+msgstr "Ubutumwa bushya"
+
+msgid "All alerts"
+msgstr "Ubutumwa bwose"
+
+msgid "Your farms"
+msgstr "Imirima yawe"
+
+msgid "Keep your farm locations and crop records together."
+msgstr "Bika hamwe amakuru y'aho imirima yawe iri n'inyandiko z'ibihingwa."
+
+msgid "Add a farm to start recording crops."
+msgstr "Ongeraho umurima kugira ngo utangire kwandika ibihingwa."
+
+msgid "Add a farm"
+msgstr "Ongeraho umurima"
+
+msgid "Save farm"
+msgstr "Bika umurima"
+
+msgid "Update farm"
+msgstr "Hindura amakuru y'umurima"
+
+msgid "Crop calendar"
+msgstr "Kalendari y'ibihingwa"
+
+msgid ""
+"Harvest dates are calendar estimates. Inspect crops in the field before "
+"confirming readiness."
+msgstr ""
+"Amatariki yo gusarura ni ibigereranyo. Banza ugenzure ibihingwa mu murima "
+"mbere yo kwemeza ko byeze."
+
+msgid "Add a farm before creating a crop record."
+msgstr "Banza wongereho umurima mbere yo kwandika igihingwa."
+
+msgid "Record a crop"
+msgstr "Andika igihingwa"
+
+msgid ""
+"Use a growing duration supported by local crop guidance; the estimate does "
+"not confirm readiness."
+msgstr ""
+"Koresha igihe cyo gukura gishingiye ku nama zizewe z'ubuhinzi; ikigereranyo "
+"nticyemeza ko igihingwa cyeze."
+
+msgid "Save crop"
+msgstr "Bika igihingwa"
+
+msgid "Update crop record"
+msgstr "Hindura inyandiko y'igihingwa"
+
+msgid "Your produce listings"
+msgstr "Umusaruro watangaje"
+
+msgid "Publish expected or available produce for buyers to discover."
+msgstr ""
+"Tangaza umusaruro uzaboneka cyangwa usanzwe uhari kugira ngo abaguzi "
+"bawubone."
+
+msgid "You have not published produce yet."
+msgstr "Ntabwo uratangaza umusaruro."
+
+msgid "Publish produce"
+msgstr "Tangaza umusaruro"
+
+msgid "Publish listing"
+msgstr "Tangaza"
+
+msgid "Update produce listing"
+msgstr "Hindura itangazo ry'umusaruro"
+
+msgid "Your buyer demands"
+msgstr "Ibyo ukeneye nk'umuguzi"
+
+msgid ""
+"Post current or future produce requirements to find potential suppliers."
+msgstr ""
+"Tangaza umusaruro ukeneye ubu cyangwa mu gihe kizaza kugira ngo ushake "
+"abawuguha."
+
+msgid "Create a demand to compare your needs with farmer listings."
+msgstr ""
+"Tangaza ibyo ukeneye kugira ngo ubigereranye n'umusaruro abahinzi batangaje."
+
+msgid "Post a buyer demand"
+msgstr "Tangaza ibyo umuguzi akeneye"
+
+msgid "Save demand"
+msgstr "Bika ibyo ukeneye"
+
+msgid "Update buyer demand"
+msgstr "Hindura ibyo ukeneye"
+
+msgid "Manage your records"
+msgstr "Genzura inyandiko zawe"
+
+msgid "Add new"
+msgstr "Ongeraho"
+
+msgid "expected"
+msgstr "byitezwe"
+
+msgid "Estimated harvest"
+msgstr "Isarura riteganyijwe"
+
+msgid "Price negotiable"
+msgstr "Igiciro kizumvikanwaho"
+
+msgid "Needed by"
+msgstr "Bikenewe bitarenze"
+
+msgid "Edit"
+msgstr "Hindura"
+
+msgid "Local produce network"
+msgstr "Urubuga rw'umusaruro wo mu karere"
+
+msgid "Marketplace | Smart AgroConnect"
+msgstr "Isoko | Smart AgroConnect"
+
+msgid ""
+"Browse produce farmers expect to make available. Contact and agree details "
+"directly before treating a listing as confirmed."
+msgstr ""
+"Reba umusaruro abahinzi biteze kuzatanga. Banza uvugane na bo mwumvikane ku "
+"bisobanuro mbere yo gufata itangazo nk'ibyemejwe."
+
+msgid "Available"
+msgstr "Birahari"
+
+msgid "available"
+msgstr "birahari"
+
+msgid "Expected"
+msgstr "Biteganyijwe"
+
+msgid "negotiable"
+msgstr "kizumvikanwaho"
+
+msgid "Price to be agreed"
+msgstr "Igiciro kizumvikanwaho"
+
+msgid "By"
+msgstr "Yatangajwe na"
+
+msgid "Request produce"
+msgstr "Saba umusaruro"
+
+msgid "Log in to request"
+msgstr "Injira kugira ngo usabe"
+
+msgid "Nothing listed just yet"
+msgstr "Nta musaruro uratangazwa"
+
+msgid "New produce listings will show here as farmers join the network."
+msgstr ""
+"Amatangazo mashya y'umusaruro azagaragara hano uko abahinzi binjira mu "
+"rubuga."
+
+msgid "Demand planning"
+msgstr "Gutegura ibyo ukeneye"
+
+msgid ""
+"Suggestions use crop name, unit, quantity, district and a 14-day date "
+"window. They are opportunities, not guaranteed supply."
+msgstr ""
+"Ibyifashishwa ni izina ry'igihingwa, igipimo, ingano, akarere n'itariki iri "
+"mu minsi 14. Ni amahirwe ashoboka, si isezerano ry'uko umusaruro uzaboneka."
+
+msgid "Your demand"
+msgstr "Ibyo ukeneye"
+
+msgid "potential matches"
+msgstr "ibihuye bishoboka"
+
+msgid "Price to agree"
+msgstr "Igiciro kizumvikanwaho"
+
+msgid "Discuss an order"
+msgstr "Ganira kuri komande"
+
+msgid ""
+"No listings match these filters yet. Keep the demand open or browse the full"
+msgstr "Nta matangazo arahuye n'ibyo wahisemo. Komeza utegereze cyangwa urebe"
+
+msgid "marketplace"
+msgstr "isoko ry'umusaruro"
+
+msgid "Start with a buyer demand"
+msgstr "Banza utangaze ibyo ukeneye"
+
+msgid "Matching compares a demand with published farmer listings."
+msgstr ""
+"Guhuza bigereranya ibyo umuguzi akeneye n'umusaruro abahinzi batangaje."
+
+msgid "Market agreements"
+msgstr "Amasezerano y'isoko"
+
+msgid "Order agreements | Smart AgroConnect"
+msgstr "Amasezerano ya komande | Smart AgroConnect"
+
+msgid ""
+"Proposed prices are separate from agreed prices. Each order records its "
+"progress from request through delivery."
+msgstr ""
+"Igiciro gitanzwe gitandukanye n'igiciro mwumvikanyeho. Buri komande "
+"igaragaza aho igeze kuva isabwe kugeza itanzwe."
+
+msgid "Proposed price"
+msgstr "Igiciro gitanzwe"
+
+msgid "To agree"
+msgstr "Kizumvikanwaho"
+
+msgid "Agreed price"
+msgstr "Igiciro mwumvikanyeho"
+
+msgid "Total"
+msgstr "Igiteranyo"
+
+msgid "Not agreed"
+msgstr "Ntabwo mwumvikanyeho"
+
+msgid "Collection"
+msgstr "Itwarwa"
+
+msgid "Accept request"
+msgstr "Emera icyifuzo"
+
+msgid "Decline"
+msgstr "Anga"
+
+msgid "Agreed FRW / unit"
+msgstr "Igiciro mwumvikanyeho (FRW / gipimo)"
+
+msgid "Confirm agreement"
+msgstr "Emeza amasezerano"
+
+msgid "Mark ready for collection"
+msgstr "Erekana ko umusaruro witeguye gutwarwa"
+
+msgid "Cancel request"
+msgstr "Hagarika icyifuzo"
+
+msgid "Arrange transport"
+msgstr "Tegura ubwikorezi"
+
+msgid "No actions available at this stage."
+msgstr "Nta gikorwa gihari kuri iki cyiciro."
+
+msgid "No orders yet"
+msgstr "Nta komande zirahari"
+
+msgid ""
+"When buyers request produce, the agreement and delivery steps will appear "
+"here."
+msgstr ""
+"Igihe abaguzi bazaba basabye umusaruro, amasezerano n'intambwe zo kuwugeza "
+"aho ujya bizagaragara hano."
+
+msgid "Explore produce"
+msgstr "Reba umusaruro"
+
+msgid "Collection and delivery"
+msgstr "Gutwara no kugeza umusaruro"
+
+msgid "Transport board | Smart AgroConnect"
+msgstr "Urubuga rw'ubwikorezi | Smart AgroConnect"
+
+msgid ""
+"Registered transporters can claim compatible requests and update pickup and "
+"delivery progress."
+msgstr ""
+"Abatwara ibicuruzwa biyandikishije bashobora kwemera ibyifuzo bihuye "
+"n'ubushobozi bwabo no kuvugurura aho gutwara no kugeza umusaruro bigeze."
+
+msgid "Route"
+msgstr "Inzira"
+
+msgid "Requester"
+msgstr "Usaba ubwikorezi"
+
+msgid "Capacity needed"
+msgstr "Ubushobozi bukenewe"
+
+msgid "Unassigned"
+msgstr "Nta mutwara uraboneka"
+
+msgid "Accept transport request"
+msgstr "Emera icyifuzo cy'ubwikorezi"
+
+msgid "Confirm pickup"
+msgstr "Emeza ko watwaye umusaruro"
+
+msgid "Confirm delivery"
+msgstr "Emeza ko wagejeje umusaruro"
+
+msgid "No transport requests"
+msgstr "Nta byifuzo by'ubwikorezi"
+
+msgid ""
+"When a buyer or farmer arranges a confirmed order, the request will appear "
+"here."
+msgstr ""
+"Icyifuzo kizagaragara hano igihe umuguzi cyangwa umuhinzi azategura komande "
+"yemejwe."
+
+msgid "After the harvest"
+msgstr "Nyuma yo gusarura"
+
+msgid "Storage records | Smart AgroConnect"
+msgstr "Inyandiko z'ububiko | Smart AgroConnect"
+
+msgid "Storage records"
+msgstr "Inyandiko z'ububiko"
+
+msgid ""
+"Log quantities and inspections. Reminders use your own configured thresholds"
+" and do not assess food safety or prove spoilage."
+msgstr ""
+"Andika ingano n'igenzura. Ibyibutsa bikurikiza igihe washyizeho; ntibisuzuma"
+" umutekano w'ibiribwa cyangwa ngo byemeze ko byangiritse."
+
+msgid "Record produce"
+msgstr "Andika umusaruro"
+
+msgid "This is a reminder only."
+msgstr "Ibi ni ukwibutsa gusa."
+
+msgid "Stored at"
+msgstr "Bibitswe"
+
+msgid "since"
+msgstr "kuva"
+
+msgid "configured period"
+msgstr "igihe washyizeho"
+
+msgid "days"
+msgstr "iminsi"
+
+msgid "Last inspection"
+msgstr "Igenzura riheruka"
+
+msgid "Record inspection"
+msgstr "Andika igenzura"
+
+msgid "No harvested produce has been recorded yet."
+msgstr "Nta musaruro wasaruwe urandikwa."
+
+msgid "Track the numbers"
+msgstr "Kurikirana imibare"
+
+msgid "Farm finances | Smart AgroConnect"
+msgstr "Imari y'ubuhinzi | Smart AgroConnect"
+
+msgid ""
+"Estimates are based only on expenses you enter and delivered orders with "
+"agreed prices."
+msgstr ""
+"Ibi bigereranyo bishingiye gusa ku mafaranga winjije no kuri komande "
+"zatanzwe zifite ibiciro mwumvikanyeho."
+
+msgid "Recorded costs"
+msgstr "Amafaranga yanditswe yakoreshejwe"
+
+msgid "Delivered-order revenue"
+msgstr "Amafaranga yavuye kuri komande zatanzwe"
+
+msgid "Estimated profit / loss"
+msgstr "Inyungu / igihombo kigereranyijwe"
+
+msgid "Add an expense"
+msgstr "Ongeraho ikiguzi"
+
+msgid "Record expense"
+msgstr "Andika ikiguzi"
+
+msgid "Recent expenses"
+msgstr "Ibyakoreshejwe vuba"
+
+msgid "No expenses recorded."
+msgstr "Nta mafaranga yakoreshejwe arandikwa."
+
+msgid "Alerts | Smart AgroConnect"
+msgstr "Ubutumwa | Smart AgroConnect"
+
+msgid "Updates for you"
+msgstr "Ubutumwa bugenewe wowe"
+
+msgid "Notifications"
+msgstr "Ubutumwa"
+
+msgid "Platform messages and reminders are shown here."
+msgstr "Ubutumwa n'ibyibutsa byo kuri uru rubuga bigaragara hano."
+
+msgid "Mark all read"
+msgstr "Shyira ubutumwa bwoseho ko bwasomwe"
+
+msgid "Read"
+msgstr "Byasomwe"
+
+msgid "New"
+msgstr "Bishya"
+
+msgid "No notifications yet."
+msgstr "Nta butumwa burahari."
+
+msgid "Weather | Smart AgroConnect"
+msgstr "Ikirere | Smart AgroConnect"
+
+msgid "Weather information"
+msgstr "Amakuru y'ikirere"
+
+msgid "Plan with local conditions."
+msgstr "Tegura ukurikije uko ikirere cyo hafi kimeze."
+
+msgid ""
+"Weather forecasts can help with planning, but they do not replace "
+"agricultural advice or field observations."
+msgstr ""
+"Iteganyagihe rishobora gufasha gutegura, ariko ntirisimbura inama z'ubuhinzi"
+" cyangwa ibyo ubonera mu murima."
+
+msgid "Forecast service not connected"
+msgstr "Serivisi y'iteganyagihe ntirahuye"
+
+msgid ""
+"This prototype does not show invented or stale forecast data. A weather "
+"provider and a configured API key are needed before live forecasts can be "
+"displayed."
+msgstr ""
+"Iyi porogaramu ntigaragaza amakuru y'iteganyagihe yahimbwe cyangwa ashaje. "
+"Hakenewe serivisi itanga amakuru y'ikirere n'urufunguzo rwa API mbere yo "
+"kwerekana iteganyagihe rigezweho."
+
+msgid ""
+"Weather information will be added after a trusted provider and service "
+"credentials are selected."
+msgstr ""
+"Amakuru y'ikirere azongerwamo nyuma yo guhitamo serivisi yizewe n'amakuru yo"
+" kuyihuza."
+
+msgid "Your account is ready. Welcome to Smart AgroConnect Rwanda."
+msgstr "Konti yawe yiteguye. Murakaza neza muri Smart AgroConnect Rwanda."
+
+msgid "Farm added."
+msgstr "Umurima wongeweho."
+
+msgid "Crop saved. Estimated harvest date: %(date)s."
+msgstr "Igihingwa cyabitswe. Itariki y'isarura igereranyijwe: %(date)s."
+
+msgid "Farm details updated."
+msgstr "Amakuru y'umurima yahinduwe."
+
+msgid "Crop details updated."
+msgstr "Amakuru y'igihingwa yahinduwe."
+
+msgid "Your produce listing is now visible to buyers."
+msgstr "Itangazo ry'umusaruro wawe ubu riragaragara ku baguzi."
+
+msgid "Only %(quantity)s %(unit)s remain available."
+msgstr "Hasigaye %(quantity)s %(unit)s ziboneka."
+
+msgid "Order request sent to the farmer for review."
+msgstr "Icyifuzo cya komande cyoherejwe ku muhinzi kugira ngo akirebe."
+
+msgid "Buyer demand updated."
+msgstr "Ibyo umuguzi akeneye byahinduwe."
+
+msgid "Your account does not have permission to access this page."
+msgstr "Konti yawe ntiyemerewe kureba uru rupapuro."
+
+msgid "This account has no active application role."
+msgstr "Iyi konti nta ruhare rukora ifite kuri uru rubuga."
+
+msgid "Your produce listing could not be updated."
+msgstr "Itangazo ry'umusaruro wawe ntiryashoboye guhindurwa."
+
+msgid "Only farmers and buyers can view order agreements."
+msgstr ""
+"Abahinzi n'abaguzi gusa ni bo bashobora kureba amasezerano ya komande."
+
+msgid "Order changes must be submitted with POST."
+msgstr "Impinduka kuri komande zigomba koherezwa hakoreshejwe POST."
+
+msgid "Enter a valid agreed price before confirming."
+msgstr "Andika igiciro mwumvikanyeho cyemewe mbere yo kwemeza."
+
+msgid "That order transition is not permitted."
+msgstr "Ihinduka ry'iyi komande ntiryemewe."
+
+msgid "Order #%(number)s updated to %(status)s."
+msgstr "Komande ya #%(number)s yahinduwe iba %(status)s."
+
+msgid "Transport requests require a registered platform role."
+msgstr ""
+"Ibyifuzo by'ubwikorezi bisaba konti ifite uruhare rwanditse kuri uru rubuga."
+
+msgid "Only the buyer or farmer in this order can request transport."
+msgstr ""
+"Umuguzi cyangwa umuhinzi uri muri iyi komande ni we gusa ushobora gusaba "
+"ubwikorezi."
+
+msgid "Confirm the order agreement before arranging transport."
+msgstr "Banza wemeze amasezerano ya komande mbere yo gutegura ubwikorezi."
+
+msgid "A transport request already exists for this order."
+msgstr "Iyi komande isanzwe ifite icyifuzo cy'ubwikorezi."
+
+msgid "Transport request posted for registered transporters."
+msgstr ""
+"Icyifuzo cy'ubwikorezi cyashyizweho kugira ngo abatwara ibicuruzwa "
+"biyandikishije bakibone."
+
+msgid "Transport changes must be submitted with POST."
+msgstr "Impinduka ku bwikorezi zigomba koherezwa hakoreshejwe POST."
+
+msgid "Your registered vehicle capacity is below this order quantity."
+msgstr ""
+"Ubushobozi bw'ikinyabiziga cyawe wandikishije buri munsi y'ingano y'iyi "
+"komande."
+
+msgid "That transport action is not permitted."
+msgstr "Icyo gikorwa cy'ubwikorezi nticyemewe."
+
+msgid "Transport request updated."
+msgstr "Icyifuzo cy'ubwikorezi cyahinduwe."
+
+msgid "Storage record saved."
+msgstr "Inyandiko y'ububiko yabitswe."
+
+msgid "Storage inspection recorded."
+msgstr "Igenzura ry'ububiko ryanditswe."
+
+msgid "Farm expense recorded."
+msgstr "Ikiguzi cy'ubuhinzi cyanditswe."
+
+msgid "Notifications are available to registered platform roles."
+msgstr ""
+"Ubutumwa buboneka ku bakoresha biyandikishije bafite uruhare kuri uru "
+"rubuga."
+
+msgid "Notifications marked as read."
+msgstr "Ubutumwa bushyizweho ko bwasomwe."
+
+msgid "Past estimated date — inspect the crop"
+msgstr "Itariki yagereranyijwe yararenze — genzura igihingwa"
+
+msgid "Estimate approaching — inspect the crop"
+msgstr "Igihe cyagereranyijwe kiri hafi — genzura igihingwa"
+
+msgid "Growing — calendar estimate only"
+msgstr "Kiracyakura — ikigereranyo cya kalendari gusa"
+
+msgid "Growing"
+msgstr "Kirakura"
+
+msgid "Harvest period approaching"
+msgstr "Igihe cy'isarura kiri hafi"
+
+msgid "Ready for field inspection"
+msgstr "Igihe cyo kugenzura mu murima kirageze"
+
+msgid "Readiness confirmed after inspection"
+msgstr "Kwera kwemejwe nyuma y'igenzura"
+
+msgid "Harvested"
+msgstr "Cyasaruwe"
+
+msgid "Reserved"
+msgstr "Cyabikiwe umuguzi"
+
+msgid "Sold"
+msgstr "Cyagurishijwe"
+
+msgid "Cancelled"
+msgstr "Byahagaritswe"
+
+msgid "Buyer collection"
+msgstr "Umuguzi azacyitwarira"
+
+msgid "Delivery preferred"
+msgstr "Gushyikirizwa ni byo byifuzwa"
+
+msgid "Flexible"
+msgstr "Uburyo bwose burashoboka"
+
+msgid "Open"
+msgstr "Biracyakomeje"
+
+msgid "Fulfilled"
+msgstr "Byujujwe"
+
+msgid "Pending farmer response"
+msgstr "Hategerejwe igisubizo cy'umuhinzi"
+
+msgid "Accepted — confirm agreement"
+msgstr "Byemewe — wemeze amasezerano"
+
+msgid "Agreement confirmed"
+msgstr "Amasezerano yemejwe"
+
+msgid "Ready for collection"
+msgstr "Witeguye gutwarwa"
+
+msgid "In transit"
+msgstr "Uri mu nzira"
+
+msgid "Delivered"
+msgstr "Byagejejwe aho bijya"
+
+msgid "Rejected"
+msgstr "Byanzwe"
+
+msgid "Seeking transporter"
+msgstr "Hategerejwe umutwara w'ibicuruzwa"
+
+msgid "Transporter assigned"
+msgstr "Umutwara w'ibicuruzwa yabonetse"
+
+msgid "Picked up"
+msgstr "Byatwaye"
+
+msgid "Past your configured storage reminder period"
+msgstr "Igihe washyizeho cyo kukwibutsa kubika cyarenze"
+
+msgid "Storage inspection has not been recorded"
+msgstr "Igenzura ry'ububiko ntirirandikwa"
+
+msgid "Storage inspection is due"
+msgstr "Igenzura ry'ububiko rirakenewe"
+
+msgid "First name"
+msgstr "Izina"
+
+msgid "Last name"
+msgstr "Izina ry'umuryango"
+
+msgid "Email"
+msgstr "Imeyili"
+
+msgid "Role"
+msgstr "Uruhare"
+
+msgid "Phone"
+msgstr "Telefoni"
+
+msgid "District"
+msgstr "Akarere"
+
+msgid "Vehicle type"
+msgstr "Ubwoko bw'ikinyabiziga"
+
+msgid "Vehicle capacity (kg)"
+msgstr "Ubushobozi bw'ikinyabiziga (kg)"
+
+msgid "Farm"
+msgstr "Umurima"
+
+msgid "Crop"
+msgstr "Igihingwa"
+
+msgid "Crop name"
+msgstr "Izina ry'igihingwa"
+
+msgid "Crop variety"
+msgstr "Ubwoko bw'igihingwa"
+
+msgid "Planting date"
+msgstr "Itariki yo gutera"
+
+msgid "Expected growing days"
+msgstr "Iminsi iteganyijwe yo gukura"
+
+msgid "Expected quantity"
+msgstr "Ingano iteganyijwe"
+
+msgid "Quantity unit"
+msgstr "Igipimo cy'ingano"
+
+msgid "Stage"
+msgstr "Icyiciro"
+
+msgid "Field observations"
+msgstr "Ibyagaragaye mu murima"
+
+msgid "Name"
+msgstr "Izina"
+
+msgid "Sector"
+msgstr "Umurenge"
+
+msgid "Size hectares"
+msgstr "Ingano y'ubutaka (ha)"
+
+msgid "Product name"
+msgstr "Izina ry'igicuruzwa"
+
+msgid "Quantity"
+msgstr "Ingano"
+
+msgid "Price per unit"
+msgstr "Igiciro kuri buri gipimo"
+
+msgid "Negotiable"
+msgstr "Kirumvikanwaho"
+
+msgid "Expected available date"
+msgstr "Itariki iteganyijwe kubonekaho"
+
+msgid "Quality description"
+msgstr "Ibisobanuro by'ubwiza"
+
+msgid "Delivery preference"
+msgstr "Uburyo bwo kugeza umusaruro"
+
+msgid "Required quantity"
+msgstr "Ingano ikenewe"
+
+msgid "Target price per unit"
+msgstr "Igiciro ntarengwa kuri buri gipimo"
+
+msgid "Needed by date"
+msgstr "Itariki bikeneweho"
+
+msgid "Quality requirements"
+msgstr "Ibisabwa ku bwiza"
+
+msgid "Proposed unit price"
+msgstr "Igiciro gitanzwe kuri buri gipimo"
+
+msgid "Collection date"
+msgstr "Itariki yo gutwara"
+
+msgid "Delivery location"
+msgstr "Aho bigomba kugezwa"
+
+msgid "Pickup location"
+msgstr "Aho bizakurwa"
+
+msgid "Destination"
+msgstr "Aho bijyanwa"
+
+msgid "Pickup date"
+msgstr "Itariki yo kubitwara"
+
+msgid "Vehicle capacity"
+msgstr "Ubushobozi bw'ikinyabiziga"
+
+msgid "Estimated cost"
+msgstr "Ikiguzi kigereranyijwe"
+
+msgid "Crop record"
+msgstr "Inyandiko y'igihingwa"
+
+msgid "Quantity remaining"
+msgstr "Ingano isigaye"
+
+msgid "Harvest date"
+msgstr "Itariki yo gusarura"
+
+msgid "Storage start date"
+msgstr "Itariki yo kubika"
+
+msgid "Storage location"
+msgstr "Aho bibitswe"
+
+msgid "Inspection interval days"
+msgstr "Iminsi hagati y'igenzura"
+
+msgid "Max storage days"
+msgstr "Iminsi ntarengwa yo kubika"
+
+msgid "Last inspection date"
+msgstr "Itariki iheruka kugenzurirwaho"
+
+msgid "Inspection notes"
+msgstr "Ibyagaragaye mu igenzura"
+
+msgid "Category"
+msgstr "Icyiciro cy'ikiguzi"
+
+msgid "Amount"
+msgstr "Amafaranga"
+
+msgid "Expense date"
+msgstr "Itariki y'ikiguzi"
+
+msgid "Description"
+msgstr "Ibisobanuro"

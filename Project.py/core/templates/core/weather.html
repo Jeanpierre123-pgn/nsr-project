@@ -1,0 +1,7 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Weather | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "Weather information" %}</p><h1>{% translate "Plan with local conditions." %}</h1><p>{% translate "Weather forecasts can help with planning, but they do not replace agricultural advice or field observations." %}</p></div></section>
+<section class="content-panel empty-wide"><span class="weather-icon">WX</span><h2>{% translate "Forecast service not connected" %}</h2><p>{% translate "This prototype does not show invented or stale forecast data. A weather provider and a configured API key are needed before live forecasts can be displayed." %}</p><p class="small-muted">{% translate "Weather information will be added after a trusted provider and service credentials are selected." %}</p></section>
+{% endblock %}
