@@ -1,0 +1,6 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Agri Assistant | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="form-layout"><div class="form-aside"><p class="eyebrow">{% translate "Practical guidance" %}</p><h1>{% translate "Agri Assistant" %}</h1><p>{% translate "Ask about crop planning, markets, storage or transport." %}</p></div><div class="form-card"><h2>{% translate "Ask a question" %}</h2><form method="post">{% csrf_token %}<textarea name="question" rows="5" required placeholder="{% translate 'Example: How should I prepare a produce listing?' %}">{{ question }}</textarea><button class="button button-primary button-full" type="submit">{% translate "Get guidance" %}</button></form>{% if answer %}<div class="notice-strip"><p><strong>{% translate "Assistant" %}</strong><br>{{ answer }}</p></div>{% endif %}<p class="form-footnote">{% translate "This assistant provides general planning guidance. Confirm agronomic, safety and treatment decisions with a qualified local professional." %}</p></div></section>
+{% endblock %}

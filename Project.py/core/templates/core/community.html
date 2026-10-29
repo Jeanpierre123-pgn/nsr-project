@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Community | Smart AgroConnect" %}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">{% translate "Local network" %}</p><h1>{% translate "Community" %}</h1><p>{% translate "Share practical updates with farmers, buyers and transporters." %}</p></div></section>
+<section class="content-panel"><h2>{% translate "Share an update" %}</h2><form method="post">{% csrf_token %}<textarea name="body" rows="4" maxlength="2000" required placeholder="{% translate 'Share a market update, farming tip or request...' %}"></textarea><button class="button button-primary" type="submit">{% translate "Post update" %}</button></form></section>
+{% for post in posts %}<article class="content-panel"><p class="small-muted">{{ post.author.user.get_full_name|default:post.author.user.username }} · {{ post.created_at|date:"d M Y H:i" }}</p><p>{{ post.body|linebreaksbr }}</p>{% for comment in post.comments.all %}<p class="small-muted">{{ comment.author.user.username }}: {{ comment.body }}</p>{% endfor %}<form method="post"><input type="hidden" name="post_id" value="{{ post.pk }}">{% csrf_token %}<input name="comment_body" maxlength="1000" placeholder="{% translate 'Write a comment...' %}" required><button class="button button-secondary" type="submit">{% translate "Comment" %}</button></form></article>{% empty %}<section class="content-panel"><p>{% translate "No community posts yet. Start the conversation." %}</p></section>{% endfor %}
+{% endblock %}

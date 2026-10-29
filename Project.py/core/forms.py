@@ -11,7 +11,7 @@ from .models import (
     Order,
     ProductListing,
     Profile,
-    StorageRecord,
+    StorageRecord, Location,
     TransportRequest,
 )
 
@@ -23,6 +23,13 @@ class RegisterForm(UserCreationForm):
     role = forms.ChoiceField(choices=Profile.Role.choices, label=_("Role"))
     phone = forms.CharField(max_length=30, required=False, label=_("Phone"))
     district = forms.CharField(max_length=100, required=False, label=_("District"))
+    sector = forms.CharField(max_length=100, required=False, label=_("Sector"))
+    cell = forms.CharField(max_length=100, required=False, label=_("Cell"))
+    village = forms.CharField(max_length=100, required=False, label=_("Village"))
+    location = forms.ModelChoiceField(
+        queryset=Location.objects.all(), required=False, label=_("Official location"),
+        help_text=_("Select an imported NISR location when available."),
+    )
     vehicle_type = forms.CharField(max_length=100, required=False, label=_("Vehicle type"))
     vehicle_capacity = forms.DecimalField(
         max_digits=10, decimal_places=2, min_value=0.01, required=False,
@@ -33,7 +40,7 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = (
             "username", "first_name", "last_name", "email", "role",
-            "phone", "district", "vehicle_type", "vehicle_capacity",
+            "phone", "district", "sector", "cell", "village", "location", "vehicle_type", "vehicle_capacity",
         )
 
     def __init__(self, *args, **kwargs):
@@ -71,6 +78,10 @@ class RegisterForm(UserCreationForm):
                 role=self.cleaned_data["role"],
                 phone=self.cleaned_data.get("phone", ""),
                 district=self.cleaned_data.get("district", ""),
+                sector=self.cleaned_data.get("sector", ""),
+                cell=self.cleaned_data.get("cell", ""),
+                village=self.cleaned_data.get("village", ""),
+                location=self.cleaned_data.get("location"),
                 vehicle_type=self.cleaned_data.get("vehicle_type", ""),
                 vehicle_capacity=self.cleaned_data.get("vehicle_capacity"),
             )
@@ -100,6 +111,8 @@ class DateInputForm(forms.ModelForm):
         "Name": "Izina",
         "District": "Akarere",
         "Sector": "Umurenge",
+        "Cell": "Akagari",
+        "Village": "Umudugudu",
         "Size hectares": "Ingano y'ubutaka (ha)",
         "Product name": "Izina ry'igicuruzwa",
         "Quantity": "Ingano",
@@ -154,7 +167,7 @@ class DateInputForm(forms.ModelForm):
 class FarmForm(DateInputForm):
     class Meta:
         model = Farm
-        fields = ("name", "district", "sector", "size_hectares")
+        fields = ("name", "district", "sector", "cell", "village", "location", "size_hectares")
         widgets = {
             "size_hectares": forms.NumberInput(attrs={"step": "0.01", "min": "0.01"}),
         }

@@ -1,14 +1,17 @@
 from datetime import timedelta
 from decimal import Decimal
 from functools import wraps
+import os
 
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q, Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -18,8 +21,8 @@ from .forms import (
     TransportRequestForm,
 )
 from .models import (
-    BuyerDemand, CropRecord, Expense, Farm, Notification, Order, ProductListing,
-    Profile, StorageRecord, TransportRequest,
+    BuyerDemand, CommunityComment, CommunityPost, CropRecord, Expense, Farm,
+    Notification, Order, ProductListing, Profile, StorageRecord, TransportRequest,
 )
 
 
@@ -69,6 +72,43 @@ def register(request):
         "form": form, "title": _("Create your account"),
         "intro": _("Join as a farmer, buyer or transporter."), "submit_label": _("Create account"),
     })
+
+
+def demo_login(request):
+    """Create a safe local demo account so judges can explore without registration."""
+    if not settings.DEBUG and not os.environ.get("ENABLE_DEMO_LOGIN"):
+        return HttpResponseForbidden(_("Demo access is disabled in this environment."))
+    role = request.GET.get("role", Profile.Role.FARMER)
+    if role not in Profile.Role.values:
+        role = Profile.Role.FARMER
+    account = {
+        Profile.Role.FARMER: ("demo_farmer", "Demo Farmer"),
+        Profile.Role.BUYER: ("demo_buyer", "Demo Buyer"),
+        Profile.Role.TRANSPORTER: ("demo_transporter", "Demo Transporter"),
+    }[role]
+    username, display_name = account
+    user, created = User.objects.get_or_create(
+        username=username,
+        defaults={"first_name": display_name.split()[1], "last_name": "Account"},
+    )
+    user.set_password("AgroConnectDemo2026!")
+    user.save(update_fields=["password", "first_name", "last_name"])
+    Profile.objects.get_or_create(
+        user=user,
+        defaults={
+            "role": role,
+            "phone": "+250 700 000 000",
+            "district": "Demo district",
+            "sector": "Demo sector",
+            "cell": "Demo cell",
+            "village": "Demo village",
+            "vehicle_type": "Demo truck" if role == Profile.Role.TRANSPORTER else "",
+            "vehicle_capacity": 1000 if role == Profile.Role.TRANSPORTER else None,
+        },
+    )
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    messages.success(request, _(f"You are signed in as the demo {role} account."))
+    return redirect("dashboard")
 
 
 @login_required
@@ -650,3 +690,76 @@ def notifications(request):
 @login_required
 def weather(request):
     return render(request, "core/weather.html")
+
+
+@login_required
+def community(request):
+    profile = Profile.objects.filter(user=request.user).first()
+    if profile is None:
+        return HttpResponseForbidden(_("Community access is available to registered platform roles."))
+    if request.method == "POST":
+        post_id = request.POST.get("post_id")
+        comment_body = request.POST.get("comment_body", "").strip()
+        if post_id and comment_body:
+            post = get_object_or_404(CommunityPost, pk=post_id)
+            CommunityComment.objects.create(post=post, author=profile, body=comment_body[:1000])
+            messages.success(request, _("Your comment was added."))
+            return redirect("community")
+        body = request.POST.get("body", "").strip()
+        if body:
+            CommunityPost.objects.create(author=profile, body=body[:2000])
+            messages.success(request, _("Your community post was shared."))
+        return redirect("community")
+    posts = CommunityPost.objects.select_related("author__user", "location").prefetch_related("comments__author__user")[:50]
+    return render(request, "core/community.html", {"posts": posts, "profile": profile})
+
+
+def _assistant_answer(question):
+    question = question.lower().strip()
+    if any(word in question for word in ("harvest", "planting", "crop calendar")):
+        return _("Record the planting date and the locally recommended growing duration. Treat the calculated harvest date as an estimate and confirm crop readiness in the field.")
+    if any(word in question for word in ("market", "sell", "buyer", "price")):
+        return _("Publish a clear listing with crop, quantity, unit, expected availability, district, quality and delivery preference. Compare buyer demands before agreeing on a price.")
+    if any(word in question for word in ("storage", "store", "warehouse")):
+        return _("Record the harvest date, storage location, remaining quantity and inspection schedule. The reminders support record-keeping; they do not certify food safety.")
+    if any(word in question for word in ("transport", "delivery", "truck")):
+        return _("Create a transport request with pickup location, destination, pickup date, capacity and estimated cost so a compatible transporter can claim it.")
+    if any(word in question for word in ("fertilizer", "seed", "irrigation", "disease")):
+        return _("Use local agricultural extension guidance for input rates and disease treatment. This assistant gives general planning guidance, not a substitute for a qualified agronomist.")
+    return _("I can help with crop planning, harvest records, market listings, storage reminders and transport coordination. Ask me about one of those topics.")
+
+
+def _ai_assistant_answer(question):
+    """Use an optional OpenAI Responses API provider without exposing credentials in code."""
+    api_key = os.environ.get("OPENAI_API_KEY")
+    model = os.environ.get("OPENAI_MODEL")
+    if not api_key or not model:
+        return None
+    try:
+        from openai import OpenAI
+
+        client = OpenAI(api_key=api_key)
+        response = client.responses.create(
+            model=model,
+            instructions=(
+                "You are Smart AgroConnect's agricultural planning assistant. "
+                "Give concise, practical guidance for Rwanda. Do not diagnose disease, "
+                "prescribe chemicals, guarantee prices, or claim causal evidence. "
+                "Recommend a qualified local extension officer for safety-critical decisions."
+            ),
+            input=question,
+        )
+        return response.output_text.strip()
+    except Exception:
+        return None
+
+
+@login_required
+def assistant(request):
+    answer = None
+    question = ""
+    if request.method == "POST":
+        question = request.POST.get("question", "").strip()
+        if question:
+            answer = _ai_assistant_answer(question) or _assistant_answer(question)
+    return render(request, "core/assistant.html", {"answer": answer, "question": question})

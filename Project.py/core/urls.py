@@ -15,6 +15,7 @@ urlpatterns = [
         ),
         name="login",
     ),
+    path("demo-login/", views.demo_login, name="demo_login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("market/", views.market, name="market"),
@@ -47,4 +48,6 @@ urlpatterns = [
     path("finances/", views.finance, name="finance"),
     path("notifications/", views.notifications, name="notifications"),
     path("weather/", views.weather, name="weather"),
+    path("community/", views.community, name="community"),
+    path("assistant/", views.assistant, name="assistant"),
 ]

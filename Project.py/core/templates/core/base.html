@@ -15,6 +15,7 @@
     <nav class="main-nav" aria-label="{% translate 'Main navigation' %}">
       <a href="{% url 'market' %}">{% translate "Marketplace" %}</a>
       <a href="{% url 'weather' %}">{% translate "Weather" %}</a>
+      {% if user.is_authenticated %}<a href="{% url 'community' %}">{% translate "Community" %}</a><a href="{% url 'assistant' %}">{% translate "Agri Assistant" %}</a>{% endif %}
       {% if user.is_authenticated %}
         <a href="{% url 'dashboard' %}">{% translate "Dashboard" %}</a>
         {% if user.profile.role == "farmer" %}

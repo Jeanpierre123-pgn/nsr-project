@@ -7,6 +7,32 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
 
+class Location(models.Model):
+    class Level(models.TextChoices):
+        PROVINCE = "province", _("Province")
+        DISTRICT = "district", _("District")
+        SECTOR = "sector", _("Sector")
+        CELL = "cell", _("Cell")
+        VILLAGE = "village", _("Village")
+
+    name = models.CharField(max_length=150)
+    code = models.CharField(max_length=50, blank=True)
+    level = models.CharField(max_length=20, choices=Level.choices)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True,
+        related_name="children",
+    )
+
+    class Meta:
+        ordering = ["level", "name"]
+        constraints = [
+            models.UniqueConstraint(fields=["level", "parent", "name"], name="unique_location_name_under_parent"),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
 class Profile(models.Model):
     class Role(models.TextChoices):
         FARMER = "farmer", _("Farmer")
@@ -17,6 +43,13 @@ class Profile(models.Model):
     role = models.CharField(max_length=20, choices=Role.choices)
     phone = models.CharField(max_length=30, blank=True)
     district = models.CharField(max_length=100, blank=True)
+    sector = models.CharField(max_length=100, blank=True)
+    cell = models.CharField(max_length=100, blank=True)
+    village = models.CharField(max_length=100, blank=True)
+    location = models.ForeignKey(
+        Location, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="profiles",
+    )
     vehicle_type = models.CharField(max_length=100, blank=True)
     vehicle_capacity = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True,
@@ -32,6 +65,12 @@ class Farm(models.Model):
     name = models.CharField(max_length=120)
     district = models.CharField(max_length=100)
     sector = models.CharField(max_length=100, blank=True)
+    cell = models.CharField(max_length=100, blank=True)
+    village = models.CharField(max_length=100, blank=True)
+    location = models.ForeignKey(
+        Location, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="farms",
+    )
     size_hectares = models.DecimalField(
         max_digits=9, decimal_places=2, null=True, blank=True,
         validators=[MinValueValidator(0.01)],
@@ -304,3 +343,29 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class CommunityPost(models.Model):
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="community_posts")
+    location = models.ForeignKey(
+        Location, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="community_posts",
+    )
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Post by {self.author.user.username}"
+
+
+class CommunityComment(models.Model):
+    post = models.ForeignKey(CommunityPost, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="community_comments")
+    body = models.CharField(max_length=1000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
