@@ -299,7 +299,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "NISR Data Trust Layer", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "NISR Data Trust Layer", "Enumerator Mode", "Policy Scenario Simulator", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -346,6 +346,7 @@ st.session_state.setdefault("transport_jobs", [])
 st.session_state.setdefault("notifications", [])
 st.session_state.setdefault("data_feedback", [])
 st.session_state.setdefault("assistant_history", [])
+st.session_state.setdefault("survey_records", [])
 
 if workspace != "AgriStat Analytics":
     st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
@@ -506,6 +507,110 @@ if workspace != "AgriStat Analytics":
             feedback_frame = pd.DataFrame(st.session_state["data_feedback"])
             st.dataframe(feedback_frame, width="stretch", hide_index=True)
             st.download_button("Download review queue", feedback_frame.to_csv(index=False).encode("utf-8"), "nisr_review_queue.csv", "text/csv")
+
+    elif workspace == "Enumerator Mode":
+        st.markdown("A structured field-collection workflow inspired by the AHS and VUP questionnaires.")
+        st.warning("Competition prototype: use anonymous demo reference codes only. Do not enter names, national IDs, phone numbers or other personal identifiers.")
+        with st.form("enumerator_form"):
+            location_cols = st.columns(4)
+            with location_cols[0]:
+                household_code = st.text_input("Anonymous household code", placeholder="HH-001", key="enum_household_code")
+                province = st.selectbox("Province", sorted(DISTRICTS_BY_PROVINCE), key="enum_province")
+            with location_cols[1]:
+                district = st.selectbox("District", DISTRICTS_BY_PROVINCE[province], key="enum_district")
+                sector = st.text_input("Sector", placeholder="Enter official sector name", key="enum_sector")
+            with location_cols[2]:
+                cell = st.text_input("Cell", placeholder="Enter official cell name", key="enum_cell")
+                village = st.text_input("Village", placeholder="Enter official village name", key="enum_village")
+            with location_cols[3]:
+                household_size = st.number_input("Household members", min_value=1, max_value=30, value=5, key="enum_size")
+                land_m2 = st.number_input("Land used (m²)", min_value=0.0, value=800.0, step=100.0, key="enum_land")
+            survey_cols = st.columns(3)
+            with survey_cols[0]:
+                enum_crop = st.selectbox("Main crop", ["Maize", "Beans", "Cassava", "Rice", "Potatoes", "None / other"], key="enum_crop")
+                harvest_kg = st.number_input("Harvest quantity (kg)", min_value=0.0, value=500.0, step=50.0, key="enum_harvest")
+            with survey_cols[1]:
+                agriculture_income = st.checkbox("Agriculture/livestock is an income source", value=True, key="enum_agri_income")
+                food_risk = st.selectbox("Food-security concern", ["No reported concern", "Moderate concern", "High concern"], key="enum_food_risk")
+            with survey_cols[2]:
+                health_cover = st.selectbox("Health coverage", ["Mutuelle / community scheme", "RAMA / MMI", "Employer", "Other", "None / unknown"], key="enum_health")
+                support_need = st.multiselect("Observed support signals", ["Disability", "No current work", "Recent crop failure", "No storage", "No market access"], key="enum_support")
+            enumerator_notes = st.text_area("Enumerator notes", placeholder="Record only non-identifying observations and follow-up needs.", key="enum_notes")
+            save_record = st.form_submit_button("Validate and save record", type="primary", use_container_width=True)
+        if save_record:
+            normalized_code = household_code.strip().upper()
+            duplicate_code = any(record["Household code"] == normalized_code for record in st.session_state["survey_records"])
+            validation_errors = []
+            if not normalized_code:
+                validation_errors.append("Anonymous household code is required.")
+            if duplicate_code:
+                validation_errors.append("This anonymous household code already exists in the demo queue.")
+            if not sector.strip() or not cell.strip() or not village.strip():
+                validation_errors.append("Sector, cell and village are required for geographic completeness.")
+            if enum_crop != "None / other" and harvest_kg <= 0:
+                validation_errors.append("Harvest quantity must be greater than zero when a main crop is selected.")
+            if validation_errors:
+                for error in validation_errors:
+                    st.error(error)
+            else:
+                st.session_state["survey_records"].insert(0, {
+                    "Household code": normalized_code,
+                    "Province": province,
+                    "District": district,
+                    "Sector": sector.strip(),
+                    "Cell": cell.strip(),
+                    "Village": village.strip(),
+                    "Household members": household_size,
+                    "Land (m²)": land_m2,
+                    "Main crop": enum_crop,
+                    "Harvest (kg)": harvest_kg,
+                    "Food-security concern": food_risk,
+                    "Health coverage": health_cover,
+                    "Support signals": ", ".join(support_need) if support_need else "None",
+                    "Status": "Needs supervisor review",
+                })
+                st.success("Record validated and added to the supervisor review queue.")
+        if st.session_state["survey_records"]:
+            st.markdown("### Supervisor review queue")
+            records_frame = pd.DataFrame(st.session_state["survey_records"])
+            st.dataframe(records_frame, width="stretch", hide_index=True)
+            st.download_button("Export approved-format review file", records_frame.to_csv(index=False).encode("utf-8"), "enumerator_review_queue.csv", "text/csv")
+
+    elif workspace == "Policy Scenario Simulator":
+        st.markdown("Test how practical interventions could change productivity and value across Rwanda's agricultural network.")
+        st.warning("Illustrative scenario model only. Results are not official forecasts and must be calibrated with approved NISR/MINAGRI data before policy use.")
+        simulator_cols = st.columns(3)
+        with simulator_cols[0]:
+            sim_province = st.selectbox("Province", sorted(df["Province"].unique()), key="sim_province")
+            sim_crop = st.selectbox("Crop", sorted(df["Crop"].unique()), key="sim_crop")
+        with simulator_cols[1]:
+            sim_farms = st.number_input("Farms reached", min_value=1, value=1000, step=100, key="sim_farms")
+            sim_price = st.number_input("Value per kg (RWF)", min_value=0.0, value=450.0, step=25.0, key="sim_price")
+        with simulator_cols[2]:
+            seed_uplift = st.slider("Improved seed adoption", 0, 100, 30, format="%d%%", key="sim_seed")
+            storage_reduction = st.slider("Storage-loss reduction", 0, 60, 20, format="%d%%", key="sim_storage")
+            transport_reduction = st.slider("Transport-loss reduction", 0, 40, 10, format="%d%%", key="sim_transport")
+        selected_rows = df[(df["Province"] == sim_province) & (df["Crop"] == sim_crop)]
+        baseline_yield = float(selected_rows["Yield (kg/ha)"].mean()) if not selected_rows.empty else float(df["Yield (kg/ha)"].mean())
+        baseline_area = 1.0
+        yield_uplift = seed_uplift / 100 * 0.16
+        baseline_production = baseline_yield * baseline_area * sim_farms
+        scenario_production = baseline_production * (1 + yield_uplift)
+        storage_saved = scenario_production * storage_reduction / 100
+        transport_saved = scenario_production * transport_reduction / 100
+        protected_value = (storage_saved + transport_saved) * sim_price
+        simulator_metrics = st.columns(4)
+        simulator_metrics[0].metric("Baseline production", f"{baseline_production:,.0f} kg")
+        simulator_metrics[1].metric("Scenario production", f"{scenario_production:,.0f} kg")
+        simulator_metrics[2].metric("Losses avoided", f"{storage_saved + transport_saved:,.0f} kg")
+        simulator_metrics[3].metric("Value protected", f"{protected_value:,.0f} RWF")
+        scenario_frame = pd.DataFrame([
+            {"Scenario": "Baseline", "Production (kg)": round(baseline_production), "Losses avoided (kg)": 0, "Value protected (RWF)": 0},
+            {"Scenario": "With selected interventions", "Production (kg)": round(scenario_production), "Losses avoided (kg)": round(storage_saved + transport_saved), "Value protected (RWF)": round(protected_value)},
+        ])
+        st.plotly_chart(px.bar(scenario_frame, x="Scenario", y=["Production (kg)", "Losses avoided (kg)"], barmode="group", title=f"Illustrative {sim_crop} scenario in {sim_province}"), use_container_width=True)
+        st.dataframe(scenario_frame, width="stretch", hide_index=True)
+        st.download_button("Download policy scenario", scenario_frame.to_csv(index=False).encode("utf-8"), "policy_scenario.csv", "text/csv")
 
     elif workspace == "Support Targeting Planner":
         st.markdown("Use household and agricultural signals to prepare a support referral for review.")
