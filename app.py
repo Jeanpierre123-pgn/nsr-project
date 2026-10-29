@@ -316,7 +316,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "NISR Data Trust Layer", "Enumerator Mode", "Policy Scenario Simulator", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "Weather & Early Warnings", "NISR Data Sources", "NISR Data Trust Layer", "Enumerator Mode", "Policy Scenario Simulator", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -324,6 +324,10 @@ with st.sidebar:
         workspace_options,
         key="workspace",
     )
+    language = st.selectbox("Language / Ururimi", ["English", "Kinyarwanda"], key="language")
+    low_bandwidth_mode = st.checkbox("Low-bandwidth mode", value=False, key="low_bandwidth_mode", help="Hides heavy charts and keeps the interface lighter for limited connectivity.")
+    if language == "Kinyarwanda":
+        st.caption("Murakaza neza · Ubuhinzi bushingiye ku mibare")
     st.divider()
     st.markdown("### Explore the data")
     province_options = sorted(df["Province"].dropna().astype(str).unique())
@@ -350,6 +354,13 @@ with st.sidebar:
 
 
 st.markdown(f'<div class="nisr-brandbar"><img src="{NISR_LOGO_URL}" alt="NISR logo"><div class="nisr-brandbar-copy">NISR-aligned agricultural intelligence · Smart AgroConnect Rwanda</div></div><div class="page-divider"></div>', unsafe_allow_html=True)
+
+
+def _plotly_chart(fig, **kwargs: object) -> None:
+    if low_bandwidth_mode:
+        st.info("Low-bandwidth mode: chart hidden. Use the tables and CSV downloads for the same information.")
+        return
+    st.plotly_chart(fig, **kwargs)
 
 
 st.session_state.setdefault("market_listings", [
@@ -425,6 +436,43 @@ if workspace != "AgriStat Analytics":
         report = impact_summary.to_csv(index=False).encode("utf-8")
         st.download_button("Download impact report (CSV)", report, "smart_agroconnect_impact_report.csv", "text/csv", type="primary")
         st.info("Competition message: Smart AgroConnect combines official-source agricultural analysis with role-based coordination for farmers, buyers and transporters.")
+
+    elif workspace == "Weather & Early Warnings":
+        st.markdown("Turn climate signals into practical actions for planting, storage and transport.")
+        st.warning("Demo warning layer: these examples are illustrative. Connect an approved Meteo Rwanda feed before using this for operational alerts.")
+        warning_data = {
+            "Eastern": {"level": "Watch", "signal": "Dry-spell risk", "action": "Review planting timing, conserve water and confirm extension advice."},
+            "Southern": {"level": "Advisory", "signal": "Heavy-rain preparation", "action": "Improve drainage, protect stored produce and check transport routes."},
+            "Western": {"level": "Watch", "signal": "Slope and rainfall exposure", "action": "Avoid unsafe transport routes and inspect erosion-control measures."},
+            "Northern": {"level": "Advisory", "signal": "Cool and wet conditions", "action": "Prioritize drying, ventilation and disease monitoring after harvest."},
+            "Kigali City": {"level": "Normal", "signal": "No demo alert", "action": "Continue routine market, storage and transport planning."},
+        }
+        weather_cols = st.columns(3)
+        with weather_cols[0]:
+            warning_province = st.selectbox("Province", sorted(warning_data), key="warning_province")
+        with weather_cols[1]:
+            warning_crop = st.selectbox("Crop", sorted(df["Crop"].unique()), key="warning_crop")
+        with weather_cols[2]:
+            warning_role = st.session_state.get("role", "Farmer")
+            st.metric("Current role", warning_role)
+        selected_warning = warning_data[warning_province]
+        warning_level = selected_warning["level"]
+        if warning_level == "Watch":
+            st.error(f"{warning_level}: {selected_warning['signal']}")
+        elif warning_level == "Advisory":
+            st.warning(f"{warning_level}: {selected_warning['signal']}")
+        else:
+            st.success(f"{warning_level}: {selected_warning['signal']}")
+        st.markdown(f"### Recommended action for {warning_crop}")
+        st.info(selected_warning["action"])
+        action_table = pd.DataFrame([
+            {"Role": "Farmer", "Action": "Adjust field work, protect harvest and record the weather-related decision."},
+            {"Role": "Buyer", "Action": "Confirm quality, volumes and delivery timing before placing a demand."},
+            {"Role": "Transporter", "Action": "Check route safety, vehicle readiness and pickup timing before dispatch."},
+        ])
+        st.dataframe(action_table, width="stretch", hide_index=True)
+        st.link_button("Check official Meteo Rwanda climate warnings", "https://www.meteorwanda.gov.rw/climate-warning")
+        st.caption("Source policy: official warning feeds must be attributed, timestamped and displayed with their update status.")
 
     elif workspace == "NISR Data Sources":
         st.markdown("Use Rwanda's official statistical catalog to ground decisions in evidence and keep the demo transparent.")
@@ -625,7 +673,7 @@ if workspace != "AgriStat Analytics":
             {"Scenario": "Baseline", "Production (kg)": round(baseline_production), "Losses avoided (kg)": 0, "Value protected (RWF)": 0},
             {"Scenario": "With selected interventions", "Production (kg)": round(scenario_production), "Losses avoided (kg)": round(storage_saved + transport_saved), "Value protected (RWF)": round(protected_value)},
         ])
-        st.plotly_chart(px.bar(scenario_frame, x="Scenario", y=["Production (kg)", "Losses avoided (kg)"], barmode="group", title=f"Illustrative {sim_crop} scenario in {sim_province}"), use_container_width=True)
+        _plotly_chart(px.bar(scenario_frame, x="Scenario", y=["Production (kg)", "Losses avoided (kg)"], barmode="group", title=f"Illustrative {sim_crop} scenario in {sim_province}"), use_container_width=True)
         st.dataframe(scenario_frame, width="stretch", hide_index=True)
         st.download_button("Download policy scenario", scenario_frame.to_csv(index=False).encode("utf-8"), "policy_scenario.csv", "text/csv")
 
@@ -929,7 +977,7 @@ with left:
     fig.update_traces(hovertemplate="%{y}<br>Yield: %{x:,.0f} kg/ha<br>Observations: %{customdata[0]}<extra></extra>")
     fig.update_layout(height=350, margin=dict(l=0, r=15, t=12, b=0), xaxis_title="Average yield (kg/ha)", yaxis_title=None, plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)")
     fig.update_traces(textposition="outside", cliponaxis=False)
-    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+    _plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 with right:
     st.markdown("**Average yield by province and crop**")
     region_summary = _yield_summary(filtered, ["Province", "Crop"])
@@ -937,7 +985,7 @@ with right:
     fig.update_traces(hovertemplate="%{x}<br>%{fullData.name}<br>Yield: %{y:,.0f} kg/ha<br>Observations: %{customdata[0]}<extra></extra>")
     fig.update_layout(height=350, margin=dict(l=0, r=15, t=12, b=0), xaxis_title=None, yaxis_title="Average yield (kg/ha)", plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)")
     fig.update_traces(textposition="outside", cliponaxis=False)
-    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+    _plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
 st.markdown("## Productivity gap analyzer")
 if is_demo_data:
@@ -1040,7 +1088,7 @@ else:
                 fig.update_traces(hovertemplate="%{x}<br>%{fullData.name}<br>Yield: %{y:,.0f} kg/ha<br>Observations: %{customdata[0]}<extra></extra>")
                 fig.update_layout(height=300, showlegend=False, margin=dict(l=0, r=0, t=12, b=0), xaxis_title=None, yaxis_title="kg/ha", plot_bgcolor="white", paper_bgcolor="rgba(0,0,0,0)")
                 fig.update_traces(textposition="outside", cliponaxis=False)
-                st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+                _plotly_chart(fig, width="stretch", config={"displayModeBar": False})
             else:
                 st.info(f"{label} is not available in this extract.")
 
@@ -1093,7 +1141,7 @@ else:
             )
             fig.update_geos(fitbounds="locations", visible=False)
             fig.update_layout(height=520, margin=dict(l=0, r=0, t=10, b=0))
-            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+            _plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
 st.markdown("## Download data")
 download_cols = st.columns(2)
