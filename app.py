@@ -402,28 +402,33 @@ if workspace != "AgriStat Analytics":
         sources = [
             {
                 "Dataset": "Agricultural Household Survey 2024",
-                "Use in Smart AgroConnect": "Farmer profiles, crop production, inputs, yields and agricultural household indicators.",
+                "Verified coverage": "2.2 million agricultural households; crop and livestock production, farm practices, inputs, extension, finance and environmental risks; district, cell and village codes.",
+                "Use in Smart AgroConnect": "Farmer profiles, crop production, input planning, advisory services and location-based agricultural indicators.",
                 "Link": "https://microdata.statistics.gov.rw/index.php/catalog/123",
             },
             {
                 "Dataset": "Comprehensive Food Security and Vulnerability Analysis 2024",
+                "Verified coverage": "Food-security and vulnerability evidence for identifying priority communities and planning support.",
                 "Use in Smart AgroConnect": "Food-security targeting, vulnerability signals and district-level priority planning.",
                 "Link": "https://microdata.statistics.gov.rw/index.php/catalog/122",
             },
             {
                 "Dataset": "Agricultural Household Survey 2020",
+                "Verified coverage": "Agricultural household production and practice indicators for comparison with newer survey rounds.",
                 "Use in Smart AgroConnect": "Trend comparisons and validation of crop productivity indicators over time.",
                 "Link": "https://microdata.statistics.gov.rw/index.php/catalog/101",
             },
             {
                 "Dataset": "Agricultural Household Survey 2017",
-                "Use in Smart AgroConnect": "Longer historical baseline for productivity and agricultural household analysis.",
+                "Verified coverage": "Production, agricultural technology, government programmes, inputs, finance, assets, market orientation, storage facilities and storage expenses.",
+                "Use in Smart AgroConnect": "Longer historical baseline for productivity, market access and the post-harvest loss planner.",
                 "Link": "https://microdata.statistics.gov.rw/index.php/catalog/90",
             },
         ]
         for source_item in sources:
             with st.container(border=True):
                 st.markdown(f"### {source_item['Dataset']}")
+                st.caption(f"Verified coverage: {source_item['Verified coverage']}")
                 st.write(source_item["Use in Smart AgroConnect"])
                 st.link_button("Open NISR dataset", source_item["Link"])
         st.markdown("### Data-use rule")
