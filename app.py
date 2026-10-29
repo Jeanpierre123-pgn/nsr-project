@@ -35,7 +35,46 @@ div[data-testid="stMetric"] {{ background: white; border: 1px solid #e3ebe3; bor
 div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] p, div[data-testid="stMetricLabel"] * {{ color: #557064 !important; opacity: 1 !important; font-weight: 600 !important; }}
 div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {{ color: var(--ink) !important; opacity: 1 !important; font-weight: 700 !important; }}
 .section-note {{ color: #668073; font-size: .88rem; margin-top: -.45rem; }} .insight {{ background: #eaf4ea; border-left: 4px solid var(--green); border-radius: 0 12px 12px 0; padding: .85rem 1rem; color: #285640; font-size: .9rem; }} .footer {{ color: #739082; font-size: .78rem; padding-top: 1.5rem; }}
+.auth-card {{ max-width: 760px; padding: 1.6rem; border: 1px solid #dfe9df; border-radius: 18px; background: white; box-shadow: 0 8px 28px rgba(21,59,46,.06); }}
 </style>""", unsafe_allow_html=True)
+
+
+ROLES = {
+    "Farmer": "Plan crops, publish harvests and coordinate delivery.",
+    "Buyer": "Find available produce and connect with trusted farmers.",
+    "Transporter": "Coordinate pickup and delivery opportunities.",
+}
+
+
+def _sign_out() -> None:
+    st.session_state["authenticated"] = False
+    st.session_state.pop("role", None)
+    st.session_state.pop("username", None)
+    st.rerun()
+
+
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if not st.session_state["authenticated"]:
+    st.sidebar.markdown("## Smart AgroConnect")
+    st.sidebar.caption("Rwanda farmer, buyer and transporter network")
+    st.sidebar.info("Use a demo role to explore the competition prototype.")
+    st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
+    st.title("A shared digital space for Rwanda’s agricultural network.")
+    st.markdown("Choose a demo role to enter the working prototype. No password is required for the competition demo.")
+    role_cols = st.columns(3)
+    for column, role in zip(role_cols, ROLES):
+        with column:
+            st.markdown(f"### {role}")
+            st.caption(ROLES[role])
+            if st.button(f"Enter as {role}", key=f"login_{role.lower()}", type="primary", use_container_width=True):
+                st.session_state["authenticated"] = True
+                st.session_state["role"] = role
+                st.session_state["username"] = f"Demo {role}"
+                st.rerun()
+    st.markdown("<div class=\"auth-card\"><strong>Competition demo</strong><br>Explore the productivity dashboard, marketplace, community and agricultural assistant after signing in.</div>", unsafe_allow_html=True)
+    st.stop()
 
 
 def _demo_data() -> pd.DataFrame:
@@ -250,6 +289,14 @@ is_demo_data = source.startswith("Illustrative synthetic demo data")
 with st.sidebar:
     st.markdown("## AgriStat Rwanda")
     st.caption("Agricultural productivity intelligence")
+    st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
+    if st.button("Log out", key="sidebar_logout", use_container_width=True):
+        _sign_out()
+    workspace = st.radio(
+        "Workspace",
+        ["AgriStat Dashboard", "Marketplace", "Community", "Agri Assistant", "My Profile"],
+        key="workspace",
+    )
     st.divider()
     st.markdown("### Explore the data")
     province_options = sorted(df["Province"].dropna().astype(str).unique())
@@ -273,6 +320,71 @@ with st.sidebar:
         st.caption("Synthetic demo mode: illustrative values only; not official statistics.")
     else:
         st.caption("Loaded local file: its origin and representativeness have not been verified by the app.")
+
+
+st.session_state.setdefault("market_listings", [
+    {"Product": "Potatoes", "Quantity": "800 kg", "Location": "Musanze", "Seller": "Demo farmer"},
+    {"Product": "Beans", "Quantity": "450 kg", "Location": "Huye", "Seller": "Demo farmer"},
+])
+st.session_state.setdefault("community_posts", [])
+
+if workspace != "AgriStat Dashboard":
+    st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
+    st.title(workspace)
+    st.caption(f"Working as {st.session_state.get('role', 'Demo user')} · Changes are kept in this demo session.")
+
+    if workspace == "Marketplace":
+        st.markdown("Connect harvests, buyers and transport opportunities in one place.")
+        if st.session_state.get("role") == "Farmer":
+            with st.form("new_listing"):
+                product = st.selectbox("Produce", ["Maize", "Beans", "Cassava", "Rice", "Potatoes"])
+                quantity = st.number_input("Quantity (kg)", min_value=1, value=100, step=25)
+                location = st.selectbox("District", sorted({district for districts in DISTRICTS_BY_PROVINCE.values() for district in districts}))
+                if st.form_submit_button("Publish harvest", type="primary"):
+                    st.session_state["market_listings"].insert(0, {"Product": product, "Quantity": f"{quantity:,.0f} kg", "Location": location, "Seller": st.session_state["username"]})
+                    st.success("Harvest published to the marketplace.")
+        st.dataframe(pd.DataFrame(st.session_state["market_listings"]), width="stretch", hide_index=True)
+        st.info("Demo marketplace: use the farmer role to publish a harvest, then switch roles to review opportunities.")
+
+    elif workspace == "Community":
+        st.markdown("Share practical farming knowledge with farmers, buyers and transporters across Rwanda.")
+        with st.form("community_post"):
+            body = st.text_area("Community message", placeholder="Share a harvest update, market question or farming tip.")
+            if st.form_submit_button("Share message", type="primary"):
+                if body.strip():
+                    st.session_state["community_posts"].insert(0, {"Author": st.session_state["username"], "Message": body.strip()})
+                    st.success("Your message is now visible to the community.")
+        if st.session_state["community_posts"]:
+            for post in st.session_state["community_posts"]:
+                with st.container(border=True):
+                    st.markdown(f"**{post['Author']}**")
+                    st.write(post["Message"])
+        else:
+            st.info("No messages yet. Start the conversation.")
+
+    elif workspace == "Agri Assistant":
+        st.markdown("Ask for practical planning guidance about crops, markets, storage or transport.")
+        question = st.text_area("Your question", placeholder="How can I prepare potatoes for a buyer?")
+        if st.button("Get guidance", type="primary"):
+            text = question.lower()
+            if "market" in text or "buyer" in text:
+                answer = "Publish the crop, quantity, expected date and district clearly. Confirm price, quality requirements and delivery terms before accepting an order."
+            elif "storage" in text:
+                answer = "Keep produce clean, dry and ventilated, separate damaged items, and record quantity and date stored. Confirm crop-specific storage guidance locally."
+            elif "transport" in text or "deliver" in text:
+                answer = "Agree on pickup location, quantity, timing, vehicle capacity and contact details before dispatch."
+            else:
+                answer = "Start with the crop, area, season, expected quantity and target market. A local extension officer can confirm agronomic treatment and input decisions."
+            st.success(answer)
+
+    else:
+        st.markdown("Your competition profile and demo access.")
+        profile_cols = st.columns(3)
+        profile_cols[0].metric("Role", st.session_state.get("role", "Demo"))
+        profile_cols[1].metric("Marketplace listings", len(st.session_state["market_listings"]))
+        profile_cols[2].metric("Community messages", len(st.session_state["community_posts"]))
+        st.info("For the public competition demo, actions are stored in your current Streamlit session. A persistent database can be added after choosing a production host.")
+    st.stop()
 
 filtered = df[df["Province"].astype(str).isin(selected_provinces) & df["Crop"].astype(str).isin(selected_crops)].copy()
 if "Season" in filtered.columns and selected_seasons:
@@ -520,4 +632,4 @@ download_cols[1].download_button(
 )
 
 st.markdown('<div class="insight"><strong>Reading the dashboard:</strong> Compare yields within the same crop and season where possible. Group differences are descriptive and may reflect other factors; they do not establish causation.</div>', unsafe_allow_html=True)
-st.markdown('<div class="footer">AgriStat Rwanda · Public demo — no login required · Prepared for the NISR Big Data Hackathon · Demo data is illustrative until an official extract is loaded.</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">Smart AgroConnect Rwanda · Public Streamlit demo · Prepared for the NISR Big Data Hackathon · Demo data is illustrative until an official extract is loaded.</div>', unsafe_allow_html=True)
