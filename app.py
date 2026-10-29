@@ -45,6 +45,12 @@ div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {{ color: v
 .section-note {{ color: #668073; font-size: .88rem; margin-top: -.45rem; }} .insight {{ background: #eaf4ea; border-left: 4px solid var(--green); border-radius: 0 12px 12px 0; padding: .85rem 1rem; color: #285640; font-size: .9rem; }} .footer {{ color: #739082; font-size: .78rem; padding-top: 1.5rem; }}
 .auth-card {{ max-width: 760px; padding: 1.6rem; border: 1px solid #dfe9df; border-radius: 18px; background: white; box-shadow: 0 8px 28px rgba(21,59,46,.06); }}
 div[data-testid="stDataFrame"] {{ max-width: 100%; overflow-x: auto; }} div[data-testid="stHorizontalBlock"] {{ gap: 1rem; }}
+div.stButton > button, div.stDownloadButton > button, div[data-testid="stLinkButton"] a {{ border: 0; border-radius: 11px; font-weight: 700; min-height: 2.55rem; transition: transform .18s ease, box-shadow .18s ease; }}
+div.stButton > button[kind="primary"] {{ background: linear-gradient(135deg, #1f7a5a, #2d9670); color: white; box-shadow: 0 6px 15px rgba(31,122,90,.2); }}
+div.stButton > button:hover, div.stDownloadButton > button:hover, div[data-testid="stLinkButton"] a:hover {{ box-shadow: 0 8px 18px rgba(21,59,46,.16); transform: translateY(-1px); }}
+div[data-testid="stVerticalBlockBorderWrapper"] {{ background: rgba(255,255,255,.72); border: 1px solid #dfeae0; border-radius: 16px; box-shadow: 0 5px 16px rgba(21,59,46,.035); }}
+[data-testid="stSidebar"] [role="radiogroup"] label {{ border-radius: 9px; margin: .12rem 0; padding: .35rem .45rem; transition: background .15s ease; }}
+[data-testid="stSidebar"] [role="radiogroup"] label:hover {{ background: rgba(255,255,255,.1); }} [data-testid="stSidebar"] hr {{ border-color: rgba(255,255,255,.18); }}
 @media (max-width: 900px) {{
   .block-container {{ padding: 1.7rem 1.4rem 2.5rem; }} h1 {{ font-size: 2.45rem !important; }} h2 {{ font-size: 1.3rem !important; }}
   .nisr-brandbar {{ margin-top: 0; }} .nisr-brandbar-copy {{ font-size: .72rem; }} div[data-testid="stMetric"] {{ padding: .85rem .9rem; }}
@@ -56,6 +62,11 @@ div[data-testid="stDataFrame"] {{ max-width: 100%; overflow-x: auto; }} div[data
   div[data-testid="stMetric"] {{ border-radius: 12px; padding: .7rem .75rem; }} div[data-testid="stMetricValue"] {{ font-size: 1.25rem; }}
   .stButton button, .stDownloadButton button {{ min-height: 2.7rem; width: 100%; }} textarea, input {{ font-size: 16px !important; }}
   [data-testid="stDataFrame"] {{ font-size: .78rem; }} .auth-card {{ padding: 1rem; }}
+}}
+@media (max-width: 420px) {{
+  .block-container {{ padding-left: .55rem; padding-right: .55rem; }} .nisr-brandbar-copy {{ font-size: .64rem; letter-spacing: .04em; }}
+  div[data-testid="stMetric"] {{ padding: .6rem; }} div[data-testid="stMetricLabel"] {{ font-size: .72rem; }} div[data-testid="stMetricValue"] {{ font-size: 1.1rem; }}
+  div[data-testid="stHorizontalBlock"] > div {{ min-width: 100%; }} .stCaption {{ font-size: .78rem; }}
 }}
 </style>""", unsafe_allow_html=True)
 
