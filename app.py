@@ -13,7 +13,7 @@ st.set_page_config(page_title="AgriStat Rwanda | Productivity intelligence", pag
 
 DATA_DIR = Path(__file__).parent / "data"
 ACCENT, INK, GOLD = "#1f7a5a", "#153b2e", "#d7a84d"
-NISR_LOGO_URL = "https://www.statistics.gov.rw/sites/default/files/logo-rwanda-nisr-transparent_0.png"
+NISR_LOGO_URL = "https://statistics.gov.rw/sites/default/files/logo-rwanda-nisr-transparent_0.png"
 DISTRICTS_BY_PROVINCE = {
     "Kigali City": ["Gasabo", "Kicukiro", "Nyarugenge"],
     "Northern": ["Burera", "Gakenke", "Gicumbi", "Musanze", "Rulindo"],
@@ -299,7 +299,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "NISR Data Trust Layer", "Support Targeting Planner", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -344,6 +344,7 @@ st.session_state.setdefault("crop_plans", [])
 st.session_state.setdefault("buyer_demands", [])
 st.session_state.setdefault("transport_jobs", [])
 st.session_state.setdefault("notifications", [])
+st.session_state.setdefault("data_feedback", [])
 
 if workspace != "AgriStat Analytics":
     st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
@@ -453,6 +454,57 @@ if workspace != "AgriStat Analytics":
         st.markdown("### Data-use rule")
         st.write("Only publish approved public-use files or aggregated indicators. Do not commit restricted microdata, personal identifiers or downloaded catalog files to GitHub.")
         st.link_button("Browse the complete NISR catalog", "https://microdata.statistics.gov.rw/index.php/catalog")
+
+    elif workspace == "NISR Data Trust Layer":
+        st.markdown("A transparent quality and provenance view for every dataset used by Smart AgroConnect.")
+        st.info("This layer helps NISR reviewers see what was checked, what remains uncertain, and how a correction can be reported.")
+        invalid_location_count = 0
+        if "District" in df.columns and "Province" in df.columns:
+            valid_locations = {district for districts in DISTRICTS_BY_PROVINCE.values() for district in districts}
+            invalid_location_count = int((~df["District"].astype(str).isin(valid_locations)).sum())
+        duplicate_count = int(df.duplicated().sum())
+        numeric_yields = pd.to_numeric(df["Yield (kg/ha)"], errors="coerce").dropna()
+        lower_bound, upper_bound = numeric_yields.quantile([0.01, 0.99]) if not numeric_yields.empty else (0, 0)
+        outlier_count = int(((numeric_yields < lower_bound) | (numeric_yields > upper_bound)).sum())
+        quality_penalty = min(100, invalid_yield_count * 2 + missing_dimension_count * 2 + duplicate_count + invalid_location_count * 3)
+        quality_score = max(0, 100 - quality_penalty)
+        trust_cols = st.columns(4)
+        trust_cols[0].metric("Data trust score", f"{quality_score}%")
+        trust_cols[1].metric("Rows reviewed", f"{len(df):,}")
+        trust_cols[2].metric("Quality flags", f"{invalid_yield_count + missing_dimension_count + duplicate_count + invalid_location_count:,}")
+        trust_cols[3].metric("User reports", f"{len(st.session_state['data_feedback']):,}")
+        quality_checks = pd.DataFrame([
+            {"Check": "Missing or non-numeric yield", "Records flagged": invalid_yield_count, "Status": "Review" if invalid_yield_count else "Pass"},
+            {"Check": "Missing province or crop", "Records flagged": missing_dimension_count, "Status": "Review" if missing_dimension_count else "Pass"},
+            {"Check": "Duplicate rows", "Records flagged": duplicate_count, "Status": "Review" if duplicate_count else "Pass"},
+            {"Check": "Invalid district names", "Records flagged": invalid_location_count, "Status": "Review" if invalid_location_count else "Pass"},
+            {"Check": "Extreme yield values (1st–99th percentile)", "Records flagged": outlier_count, "Status": "Monitor" if outlier_count else "Pass"},
+        ])
+        st.markdown("### Automated data-quality checks")
+        st.dataframe(quality_checks, width="stretch", hide_index=True)
+        st.markdown("### Provenance and indicator dictionary")
+        provenance = pd.DataFrame([
+            {"Indicator": "Yield (kg/ha)", "Definition": "Reported yield in kilograms per harvested hectare.", "Source status": source, "Geography": "Province / District / Crop"},
+            {"Indicator": "Province", "Definition": "Rwanda administrative province name.", "Source status": "Validated against app geography reference", "Geography": "Province"},
+            {"Indicator": "District", "Definition": "District associated with the agricultural observation.", "Source status": "Checked against province–district mapping", "Geography": "District"},
+            {"Indicator": "Crop", "Definition": "Crop category recorded for the observation.", "Source status": "Dataset field; review against survey codebook", "Geography": "Crop"},
+        ])
+        st.dataframe(provenance, width="stretch", hide_index=True)
+        st.download_button("Download quality report", quality_checks.to_csv(index=False).encode("utf-8"), "nisr_data_quality_report.csv", "text/csv")
+        st.markdown("### Report a data-quality issue")
+        with st.form("data_feedback_form"):
+            issue_type = st.selectbox("Issue type", ["Wrong location", "Missing indicator", "Unexpected value", "Duplicate record", "Source or definition question"])
+            issue_note = st.text_area("Describe the issue", placeholder="Example: District name does not match the official province hierarchy.")
+            if st.form_submit_button("Submit review report", type="primary"):
+                if issue_note.strip():
+                    st.session_state["data_feedback"].insert(0, {"Issue type": issue_type, "Description": issue_note.strip(), "Status": "Submitted", "Reporter": st.session_state.get("username", "Demo user")})
+                    st.success("Review report submitted to the demo queue.")
+                else:
+                    st.warning("Please describe the issue before submitting.")
+        if st.session_state["data_feedback"]:
+            feedback_frame = pd.DataFrame(st.session_state["data_feedback"])
+            st.dataframe(feedback_frame, width="stretch", hide_index=True)
+            st.download_button("Download review queue", feedback_frame.to_csv(index=False).encode("utf-8"), "nisr_review_queue.csv", "text/csv")
 
     elif workspace == "Support Targeting Planner":
         st.markdown("Use household and agricultural signals to prepare a support referral for review.")
