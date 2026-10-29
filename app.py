@@ -345,6 +345,7 @@ st.session_state.setdefault("buyer_demands", [])
 st.session_state.setdefault("transport_jobs", [])
 st.session_state.setdefault("notifications", [])
 st.session_state.setdefault("data_feedback", [])
+st.session_state.setdefault("assistant_history", [])
 
 if workspace != "AgriStat Analytics":
     st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
@@ -665,19 +666,73 @@ if workspace != "AgriStat Analytics":
             st.info("No messages yet. Start the conversation.")
 
     elif workspace == "Agri Assistant":
-        st.markdown("Ask for practical planning guidance about crops, markets, storage or transport.")
-        question = st.text_area("Your question", placeholder="How can I prepare potatoes for a buyer?")
-        if st.button("Get guidance", type="primary"):
-            text = question.lower()
-            if "market" in text or "buyer" in text:
-                answer = "Publish the crop, quantity, expected date and district clearly. Confirm price, quality requirements and delivery terms before accepting an order."
-            elif "storage" in text:
-                answer = "Keep produce clean, dry and ventilated, separate damaged items, and record quantity and date stored. Confirm crop-specific storage guidance locally."
-            elif "transport" in text or "deliver" in text:
-                answer = "Agree on pickup location, quantity, timing, vehicle capacity and contact details before dispatch."
+        st.markdown("Get structured, practical guidance for a real farm, market or delivery decision.")
+        st.caption("The assistant provides decision support from the information you enter. Confirm agronomic treatment, prices and safety-critical decisions with a qualified local officer.")
+        st.markdown("### Build a guidance request")
+        with st.form("assistant_form"):
+            request_cols = st.columns(3)
+            with request_cols[0]:
+                topic = st.selectbox("What do you need help with?", ["Crop planning", "Market access", "Storage and post-harvest", "Transport and delivery", "Support referral"], key="assistant_topic")
+                assistant_crop = st.selectbox("Crop or produce", ["Maize", "Beans", "Cassava", "Rice", "Potatoes", "Other"], key="assistant_crop")
+            with request_cols[1]:
+                assistant_district = st.selectbox("District", sorted({district for districts in DISTRICTS_BY_PROVINCE.values() for district in districts}), key="assistant_district")
+                assistant_season = st.selectbox("Season", ["Season A", "Season B", "Season C", "Not sure"], key="assistant_season")
+            with request_cols[2]:
+                assistant_area = st.number_input("Farm area (ha)", min_value=0.0, value=1.0, step=0.1, key="assistant_area")
+                assistant_quantity = st.number_input("Expected quantity (kg)", min_value=0.0, value=500.0, step=50.0, key="assistant_quantity")
+            assistant_market = st.text_input("Target market or buyer", placeholder="Example: local cooperative, school, Kigali market", key="assistant_market")
+            question = st.text_area("Describe the decision", placeholder="Example: I expect 500 kg of potatoes in Musanze. How should I prepare and deliver it?", key="assistant_question")
+            get_guidance = st.form_submit_button("Generate action plan", type="primary", use_container_width=True)
+
+        if get_guidance:
+            market_label = assistant_market.strip() or "a confirmed local buyer"
+            if topic == "Crop planning":
+                actions = [
+                    f"Confirm the {assistant_crop} variety, planting date and {assistant_area:.1f} ha available in {assistant_district}.",
+                    "Record seed, fertilizer, labour and expected harvest costs so the plan can be compared with the final result.",
+                    f"Use {assistant_season} as the planning period and confirm rainfall or extension advice before applying inputs.",
+                ]
+                summary = "A production plan should connect land, timing, inputs and an expected market—not only the crop name."
+            elif topic == "Market access":
+                actions = [
+                    f"Publish one clear listing: {assistant_crop}, approximately {assistant_quantity:,.0f} kg, district {assistant_district}, and expected availability.",
+                    f"Confirm quality requirements, price, payment terms and delivery point with {market_label} before accepting the order.",
+                    "Keep a simple record of quantity, buyer, agreed price and delivery status for traceability.",
+                ]
+                summary = "A buyer can act faster when the produce, quantity, location, quality and terms are visible in one request."
+            elif topic == "Storage and post-harvest":
+                actions = [
+                    f"For {assistant_crop}, weigh the {assistant_quantity:,.0f} kg before storage and record the date and condition.",
+                    "Dry and sort produce, separate damaged items, keep the store ventilated, and use an appropriate sealed or raised storage method.",
+                    "Recheck quantity and quality before selling; use the Loss & Storage Planner to estimate value protected.",
+                ]
+                summary = "The most useful storage decision is measurable: record quantity and condition before and after storage."
+            elif topic == "Transport and delivery":
+                actions = [
+                    f"Confirm pickup in {assistant_district}, approximately {assistant_quantity:,.0f} kg of {assistant_crop}, and the delivery deadline.",
+                    "Match the load with vehicle capacity, packaging, road conditions and weather; avoid leaving harvested produce exposed.",
+                    f"Share the buyer contact and delivery point with the transporter, then record proof of delivery for {market_label}.",
+                ]
+                summary = "A reliable delivery plan makes the quantity, route, timing, vehicle and receiver explicit before dispatch."
             else:
-                answer = "Start with the crop, area, season, expected quantity and target market. A local extension officer can confirm agronomic treatment and input decisions."
-            st.success(answer)
+                actions = [
+                    "Use the Support Targeting Planner for a structured, non-official referral review.",
+                    "Do not enter names, national ID numbers, phone numbers or other personal identifiers in this demo.",
+                    "Refer the case to the appropriate sector or district officer for official assessment and follow-up.",
+                ]
+                summary = "The platform can prepare a documented referral, but only authorized public officers can make an official support decision."
+            st.session_state["assistant_history"].insert(0, {"Topic": topic, "Crop": assistant_crop, "District": assistant_district, "Summary": summary})
+            st.success("Action plan generated")
+            st.markdown(f"**{summary}**")
+            for action in actions:
+                st.markdown(f"- {action}")
+            if question.strip():
+                st.info(f"Your context was included: {question.strip()}")
+            st.caption("Demo guidance only · Verify technical recommendations with Rwanda's agricultural extension services.")
+
+        if st.session_state["assistant_history"]:
+            st.markdown("### Recent guidance")
+            st.dataframe(pd.DataFrame(st.session_state["assistant_history"]), width="stretch", hide_index=True)
 
     elif workspace == "My Profile":
         st.markdown("Your competition profile and demo access.")
