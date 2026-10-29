@@ -20,6 +20,9 @@ a { color: var(--green); text-decoration: none; }
 a:hover { color: var(--green-dark); }
 button, input, select, textarea { font: inherit; }
 .site-header { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 max(calc((100vw - 1200px) / 2), 5vw); background: rgba(255,255,255,.92); border-bottom: 1px solid var(--line); }
+.brand-group { display: flex; align-items: center; gap: 17px; }
+.nisr-brand { display: flex; align-items: center; padding-left: 17px; border-left: 1px solid var(--line); }
+.nisr-brand img { display: block; width: auto; max-width: 150px; height: 42px; object-fit: contain; }
 .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); font: 800 17px/1.05 Manrope, sans-serif; letter-spacing: -.5px; white-space: nowrap; }
 .brand-mark { width: 39px; height: 39px; display: grid; place-items: center; color: white; background: var(--green); border-radius: 12px 12px 12px 4px; font-size: 13px; letter-spacing: 0; }
 .brand-light { color: var(--green); }
@@ -147,6 +150,7 @@ h3 { font-size: 19px; }
 .weather-icon { display: grid; width: 54px; height: 54px; place-items: center; margin: 0 auto 15px; border-radius: 50%; background: #eaf2ef; color: var(--green); font-weight: 800; }
 @media (max-width: 900px) {
   .site-header { align-items: flex-start; flex-direction: row; flex-wrap: wrap; padding: 17px 5vw; }
+  .nisr-brand img { max-width: 120px; height: 34px; }
   .main-nav { justify-content: flex-start; gap: 12px 17px; }
   .hero { gap: 25px; }
   .feature-grid { grid-template-columns: repeat(2, 1fr); }
