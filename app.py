@@ -31,7 +31,9 @@ st.markdown(f"""
 h1 {{ font-family: 'Playfair Display', Georgia, serif; font-size: 3.2rem !important; margin-bottom: .3rem; }} h2 {{ font-size: 1.45rem !important; margin-top: 1rem; }} p, label, .stMarkdown {{ font-family: 'DM Sans', sans-serif; }}
 .eyebrow {{ color: var(--green); font: 700 .78rem 'DM Sans', sans-serif; letter-spacing: .15em; text-transform: uppercase; margin-bottom: .6rem; }} .subtitle {{ color: #557064; font-size: 1.05rem; margin-bottom: 1.8rem; }}
 .source-pill {{ background: #e5f1e7; border: 1px solid #cce2d2; border-radius: 999px; color: #216543; display: inline-block; font: 600 .78rem 'DM Sans', sans-serif; padding: .38rem .75rem; }}
-div[data-testid="stMetric"] {{ background: white; border: 1px solid #e3ebe3; border-radius: 16px; padding: 1.1rem 1.25rem; box-shadow: 0 5px 18px rgba(21,59,46,.045); }} div[data-testid="stMetricLabel"] {{ color: #638074; font-weight: 600; }} div[data-testid="stMetricValue"] {{ color: var(--ink); font-weight: 700; }}
+div[data-testid="stMetric"] {{ background: white; border: 1px solid #e3ebe3; border-radius: 16px; padding: 1.1rem 1.25rem; box-shadow: 0 5px 18px rgba(21,59,46,.045); }}
+div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] p, div[data-testid="stMetricLabel"] * {{ color: #557064 !important; opacity: 1 !important; font-weight: 600 !important; }}
+div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {{ color: var(--ink) !important; opacity: 1 !important; font-weight: 700 !important; }}
 .section-note {{ color: #668073; font-size: .88rem; margin-top: -.45rem; }} .insight {{ background: #eaf4ea; border-left: 4px solid var(--green); border-radius: 0 12px 12px 0; padding: .85rem 1rem; color: #285640; font-size: .9rem; }} .footer {{ color: #739082; font-size: .78rem; padding-top: 1.5rem; }}
 </style>""", unsafe_allow_html=True)
 
