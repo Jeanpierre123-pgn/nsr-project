@@ -180,7 +180,7 @@ def _load_benchmarks() -> pd.DataFrame:
     benchmarks["Source URL"] = benchmarks["Source URL"].astype("string").str.strip()
     if "Season" not in benchmarks.columns:
         benchmarks["Season"] = ""
-    elif workspace == "My Profile":
+    else:
         benchmarks["Season"] = benchmarks["Season"].fillna("").astype("string").str.strip()
     benchmarks["Benchmark yield (kg/ha)"] = pd.to_numeric(
         benchmarks["Benchmark yield (kg/ha)"], errors="coerce"
@@ -292,9 +292,12 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    if st.session_state.get("workspace") not in workspace_options:
+        st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
         "Workspace",
-        ["AgriStat Dashboard", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"],
+        workspace_options,
         key="workspace",
     )
     st.divider()
@@ -332,12 +335,54 @@ st.session_state.setdefault("buyer_demands", [])
 st.session_state.setdefault("transport_jobs", [])
 st.session_state.setdefault("notifications", [])
 
-if workspace != "AgriStat Dashboard":
+if workspace != "AgriStat Analytics":
     st.markdown('<div class="eyebrow">Smart AgroConnect Rwanda</div>', unsafe_allow_html=True)
     st.title(workspace)
     st.caption(f"Working as {st.session_state.get('role', 'Demo user')} · Changes are kept in this demo session.")
 
-    if workspace == "Operations":
+    if workspace == "My Dashboard":
+        role = st.session_state.get("role")
+        if role == "Farmer":
+            st.markdown("Plan your production, publish harvests and coordinate delivery.")
+            summary_cols = st.columns(4)
+            summary_cols[0].metric("Crop plans", len(st.session_state["crop_plans"]))
+            summary_cols[1].metric("My harvest listings", sum(item["Seller"] == st.session_state["username"] for item in st.session_state["market_listings"]))
+            summary_cols[2].metric("Delivery jobs", len(st.session_state["transport_jobs"]))
+            summary_cols[3].metric("Notifications", len(st.session_state["notifications"]))
+            st.markdown("### Farmer actions")
+            st.info("Start with a crop plan, then publish your expected harvest so buyers can find you.")
+            if st.session_state["crop_plans"]:
+                st.dataframe(pd.DataFrame(st.session_state["crop_plans"]), width="stretch", hide_index=True)
+            else:
+                st.warning("No crop plans yet. Open Operations to create your first plan.")
+        elif role == "Buyer":
+            st.markdown("Find produce, post demand and track sourcing activity.")
+            summary_cols = st.columns(4)
+            summary_cols[0].metric("Open demands", sum(item["Status"] == "Open" for item in st.session_state["buyer_demands"]))
+            summary_cols[1].metric("Available harvests", len(st.session_state["market_listings"]))
+            summary_cols[2].metric("Transport requests", len(st.session_state["transport_jobs"]))
+            summary_cols[3].metric("Notifications", len(st.session_state["notifications"]))
+            st.markdown("### Buyer actions")
+            st.info("Post what you need—produce, quantity, district and deadline—to create a clear sourcing request.")
+            if st.session_state["buyer_demands"]:
+                st.dataframe(pd.DataFrame(st.session_state["buyer_demands"]), width="stretch", hide_index=True)
+            else:
+                st.warning("No buyer demands yet. Open Operations to post one.")
+        else:
+            st.markdown("Manage delivery opportunities and keep agricultural supply moving.")
+            summary_cols = st.columns(4)
+            summary_cols[0].metric("Open demands", sum(item["Status"] == "Open" for item in st.session_state["buyer_demands"]))
+            summary_cols[1].metric("Available harvests", len(st.session_state["market_listings"]))
+            summary_cols[2].metric("Assigned deliveries", len(st.session_state["transport_jobs"]))
+            summary_cols[3].metric("Notifications", len(st.session_state["notifications"]))
+            st.markdown("### Transporter actions")
+            st.info("Review open buyer demands in Operations and claim deliveries that match your route.")
+            if st.session_state["transport_jobs"]:
+                st.dataframe(pd.DataFrame(st.session_state["transport_jobs"]), width="stretch", hide_index=True)
+            else:
+                st.warning("No deliveries assigned yet. Open Operations to review opportunities.")
+
+    elif workspace == "Operations":
         st.markdown("Turn a harvest plan into a coordinated market and delivery workflow.")
         role = st.session_state.get("role")
         if role == "Farmer":
