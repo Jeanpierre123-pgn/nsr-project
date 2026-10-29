@@ -292,7 +292,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -395,6 +395,48 @@ if workspace != "AgriStat Analytics":
         report = impact_summary.to_csv(index=False).encode("utf-8")
         st.download_button("Download impact report (CSV)", report, "smart_agroconnect_impact_report.csv", "text/csv", type="primary")
         st.info("Competition message: Smart AgroConnect combines official-source agricultural analysis with role-based coordination for farmers, buyers and transporters.")
+
+    elif workspace == "Loss & Storage Planner":
+        st.markdown("Estimate post-harvest losses and choose a practical storage response before produce loses value.")
+        st.caption("The maize baseline is informed by MINAGRI's 2024/25 post-harvest report. Other crop rates are illustrative demo assumptions and should be replaced with district records.")
+        planner_cols = st.columns(3)
+        with planner_cols[0]:
+            planner_crop = st.selectbox("Crop", ["Maize", "Beans", "Cassava", "Rice", "Potatoes"], key="planner_crop")
+            quantity_kg = st.number_input("Harvest quantity (kg)", min_value=1.0, value=1000.0, step=50.0, key="planner_quantity")
+        with planner_cols[1]:
+            default_loss = {"Maize": 13.22, "Beans": 10.0, "Cassava": 15.0, "Rice": 8.0, "Potatoes": 12.0}[planner_crop]
+            loss_rate = st.number_input("Expected loss rate (%)", min_value=0.0, max_value=80.0, value=float(default_loss), step=0.5, key=f"planner_loss_{planner_crop}")
+            price_per_kg = st.number_input("Expected value (RWF/kg)", min_value=0.0, value=450.0, step=25.0, key="planner_price")
+        with planner_cols[2]:
+            storage_action = st.selectbox("Recommended action", ["Drying shelter + moisture check", "PICS/hermetic storage bags", "Collective warehouse", "Cold room / rapid transport"], key="planner_action")
+            improvement = {"Drying shelter + moisture check": 0.45, "PICS/hermetic storage bags": 0.55, "Collective warehouse": 0.60, "Cold room / rapid transport": 0.65}[storage_action]
+
+        baseline_loss_kg = quantity_kg * loss_rate / 100
+        baseline_value = baseline_loss_kg * price_per_kg
+        remaining_loss_kg = baseline_loss_kg * (1 - improvement)
+        recovered_kg = baseline_loss_kg - remaining_loss_kg
+        recovered_value = recovered_kg * price_per_kg
+        result_cols = st.columns(4)
+        result_cols[0].metric("Estimated loss", f"{baseline_loss_kg:,.0f} kg")
+        result_cols[1].metric("Value at risk", f"{baseline_value:,.0f} RWF")
+        result_cols[2].metric("Potentially recovered", f"{recovered_kg:,.0f} kg")
+        result_cols[3].metric("Value protected", f"{recovered_value:,.0f} RWF")
+        if loss_rate >= 13:
+            st.warning(f"Priority intervention: {planner_crop} has a high estimated loss exposure. Start with {storage_action.lower()} and confirm the result with a moisture or weighing record.")
+        else:
+            st.success(f"Recommended next step: use {storage_action.lower()} and record quantity before and after storage.")
+        plan = pd.DataFrame([{
+            "Crop": planner_crop,
+            "Harvest (kg)": round(quantity_kg, 1),
+            "Expected loss (%)": round(loss_rate, 2),
+            "Estimated loss (kg)": round(baseline_loss_kg, 1),
+            "Value at risk (RWF)": round(baseline_value),
+            "Action": storage_action,
+            "Potential value protected (RWF)": round(recovered_value),
+        }])
+        st.dataframe(plan, width="stretch", hide_index=True)
+        st.download_button("Download storage action plan", plan.to_csv(index=False).encode("utf-8"), "post_harvest_action_plan.csv", "text/csv")
+        st.markdown("[Open MINAGRI post-harvest report](https://www.minagri.gov.rw/fileadmin/user_upload/Minagri/Publications/Annual_Reports/Annual_report_2024-2025_Final.pdf)")
 
     elif workspace == "Operations":
         st.markdown("Turn a harvest plan into a coordinated market and delivery workflow.")
