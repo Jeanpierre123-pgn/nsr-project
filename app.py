@@ -58,7 +58,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{ background: rgba(255,255,255,
 @media (max-width: 600px) {{
   .block-container {{ padding: 1rem .75rem 2rem; }} h1 {{ font-size: 2rem !important; line-height: 1.08; }} h2 {{ font-size: 1.15rem !important; }} h3 {{ font-size: 1rem !important; }}
   .nisr-brandbar {{ align-items: flex-start; border-radius: 14px; flex-direction: column; gap: .55rem; margin: 0 0 1rem; padding: .75rem; }} .nisr-brandbar img {{ max-height: 34px; max-width: 145px; }} .nisr-brandbar-copy {{ border-left: 0; border-top: 1px solid #cddfd1; padding: .55rem 0 0; width: 100%; }}
-  .page-divider {{ margin-bottom: .9rem; }} div[data-testid="stHorizontalBlock"] {{ flex-wrap: wrap; gap: .4rem; }} div[data-testid="stHorizontalBlock"] > div {{ min-width: min(100%, 220px); }}
+  .page-divider {{ margin-bottom: .9rem; }} div[data-testid="stHorizontalBlock"] {{ align-items: stretch; flex-direction: column !important; gap: .55rem; }} div[data-testid="stHorizontalBlock"] > div {{ flex: 1 1 100% !important; min-width: 100% !important; width: 100% !important; }}
   div[data-testid="stMetric"] {{ border-radius: 12px; padding: .7rem .75rem; }} div[data-testid="stMetricValue"] {{ font-size: 1.25rem; }}
   .stButton button, .stDownloadButton button {{ min-height: 2.7rem; width: 100%; }} textarea, input {{ font-size: 16px !important; }}
   [data-testid="stDataFrame"] {{ font-size: .78rem; }} .auth-card {{ padding: 1rem; }}
