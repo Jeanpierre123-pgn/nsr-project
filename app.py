@@ -40,6 +40,19 @@ div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] p, div[data-t
 div[data-testid="stMetricValue"], div[data-testid="stMetricValue"] * {{ color: var(--ink) !important; opacity: 1 !important; font-weight: 700 !important; }}
 .section-note {{ color: #668073; font-size: .88rem; margin-top: -.45rem; }} .insight {{ background: #eaf4ea; border-left: 4px solid var(--green); border-radius: 0 12px 12px 0; padding: .85rem 1rem; color: #285640; font-size: .9rem; }} .footer {{ color: #739082; font-size: .78rem; padding-top: 1.5rem; }}
 .auth-card {{ max-width: 760px; padding: 1.6rem; border: 1px solid #dfe9df; border-radius: 18px; background: white; box-shadow: 0 8px 28px rgba(21,59,46,.06); }}
+div[data-testid="stDataFrame"] {{ max-width: 100%; overflow-x: auto; }} div[data-testid="stHorizontalBlock"] {{ gap: 1rem; }}
+@media (max-width: 900px) {{
+  .block-container {{ padding: 1.7rem 1.4rem 2.5rem; }} h1 {{ font-size: 2.45rem !important; }} h2 {{ font-size: 1.3rem !important; }}
+  .nisr-brandbar {{ margin-top: 0; }} .nisr-brandbar-copy {{ font-size: .72rem; }} div[data-testid="stMetric"] {{ padding: .85rem .9rem; }}
+}}
+@media (max-width: 600px) {{
+  .block-container {{ padding: 1rem .75rem 2rem; }} h1 {{ font-size: 2rem !important; line-height: 1.08; }} h2 {{ font-size: 1.15rem !important; }} h3 {{ font-size: 1rem !important; }}
+  .nisr-brandbar {{ align-items: flex-start; border-radius: 14px; flex-direction: column; gap: .55rem; margin: 0 0 1rem; padding: .75rem; }} .nisr-brandbar img {{ max-height: 34px; max-width: 145px; }} .nisr-brandbar-copy {{ border-left: 0; border-top: 1px solid #cddfd1; padding: .55rem 0 0; width: 100%; }}
+  .page-divider {{ margin-bottom: .9rem; }} div[data-testid="stHorizontalBlock"] {{ flex-wrap: wrap; gap: .4rem; }} div[data-testid="stHorizontalBlock"] > div {{ min-width: min(100%, 220px); }}
+  div[data-testid="stMetric"] {{ border-radius: 12px; padding: .7rem .75rem; }} div[data-testid="stMetricValue"] {{ font-size: 1.25rem; }}
+  .stButton button, .stDownloadButton button {{ min-height: 2.7rem; width: 100%; }} textarea, input {{ font-size: 16px !important; }}
+  [data-testid="stDataFrame"] {{ font-size: .78rem; }} .auth-card {{ padding: 1rem; }}
+}}
 </style>""", unsafe_allow_html=True)
 
 
