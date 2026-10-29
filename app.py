@@ -292,7 +292,7 @@ with st.sidebar:
     st.success(f"Signed in: {st.session_state.get('username', 'Demo user')}")
     if st.button("Log out", key="sidebar_logout", use_container_width=True):
         _sign_out()
-    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
+    workspace_options = ["My Dashboard", "AgriStat Analytics", "Impact & Reports", "NISR Data Sources", "Loss & Storage Planner", "Operations", "Marketplace", "Community", "Agri Assistant", "My Profile"]
     if st.session_state.get("workspace") not in workspace_options:
         st.session_state["workspace"] = "My Dashboard"
     workspace = st.radio(
@@ -395,6 +395,40 @@ if workspace != "AgriStat Analytics":
         report = impact_summary.to_csv(index=False).encode("utf-8")
         st.download_button("Download impact report (CSV)", report, "smart_agroconnect_impact_report.csv", "text/csv", type="primary")
         st.info("Competition message: Smart AgroConnect combines official-source agricultural analysis with role-based coordination for farmers, buyers and transporters.")
+
+    elif workspace == "NISR Data Sources":
+        st.markdown("Use Rwanda's official statistical catalog to ground decisions in evidence and keep the demo transparent.")
+        st.info("The live prototype currently uses illustrative demo observations. These official catalog links are the recommended path for replacing them with approved, documented datasets.")
+        sources = [
+            {
+                "Dataset": "Agricultural Household Survey 2024",
+                "Use in Smart AgroConnect": "Farmer profiles, crop production, inputs, yields and agricultural household indicators.",
+                "Link": "https://microdata.statistics.gov.rw/index.php/catalog/123",
+            },
+            {
+                "Dataset": "Comprehensive Food Security and Vulnerability Analysis 2024",
+                "Use in Smart AgroConnect": "Food-security targeting, vulnerability signals and district-level priority planning.",
+                "Link": "https://microdata.statistics.gov.rw/index.php/catalog/122",
+            },
+            {
+                "Dataset": "Agricultural Household Survey 2020",
+                "Use in Smart AgroConnect": "Trend comparisons and validation of crop productivity indicators over time.",
+                "Link": "https://microdata.statistics.gov.rw/index.php/catalog/101",
+            },
+            {
+                "Dataset": "Agricultural Household Survey 2017",
+                "Use in Smart AgroConnect": "Longer historical baseline for productivity and agricultural household analysis.",
+                "Link": "https://microdata.statistics.gov.rw/index.php/catalog/90",
+            },
+        ]
+        for source_item in sources:
+            with st.container(border=True):
+                st.markdown(f"### {source_item['Dataset']}")
+                st.write(source_item["Use in Smart AgroConnect"])
+                st.link_button("Open NISR dataset", source_item["Link"])
+        st.markdown("### Data-use rule")
+        st.write("Only publish approved public-use files or aggregated indicators. Do not commit restricted microdata, personal identifiers or downloaded catalog files to GitHub.")
+        st.link_button("Browse the complete NISR catalog", "https://microdata.statistics.gov.rw/index.php/catalog")
 
     elif workspace == "Loss & Storage Planner":
         st.markdown("Estimate post-harvest losses and choose a practical storage response before produce loses value.")
