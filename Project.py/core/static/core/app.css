@@ -28,11 +28,13 @@ button, input, select, textarea { font: inherit; }
 .brand-light { color: var(--green); }
 .brand small { display: block; margin-top: 5px; color: var(--muted); font: 700 9px "DM Sans", sans-serif; letter-spacing: 2.5px; }
 .main-nav { display: flex; align-items: center; justify-content: flex-end; gap: 19px; flex-wrap: wrap; }
-.main-nav a, .link-button { color: #53675c; font-size: 13px; font-weight: 600; }
+.main-nav a, .link-button, .nav-logout-button { color: #53675c; font-size: 13px; font-weight: 600; }
 .main-nav a:hover, .link-button:hover { color: var(--green); }
 .nav-cta { padding: 11px 15px; color: white !important; background: var(--green); border-radius: 8px; }
 .nav-logout { margin: 0; }
 .link-button { padding: 0; border: 0; background: none; cursor: pointer; }
+.nav-logout-button { padding: 9px 13px; border: 1px solid #e3c9c2; border-radius: 8px; background: #fff8f6; color: #8a5042; cursor: pointer; }
+.nav-logout-button:hover, .nav-logout-button:focus-visible { border-color: #c98b7d; background: #fff0ec; color: #713c31; }
 .language-switch { display: flex; flex: 0 0 auto; align-items: center; padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
 .language-switch button { min-width: 34px; padding: 6px 7px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); cursor: pointer; font-size: 11px; font-weight: 800; }
 .language-switch button[aria-current="true"] { background: white; color: var(--green-dark); box-shadow: 0 1px 3px #153b2e18; }

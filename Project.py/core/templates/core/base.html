@@ -29,7 +29,7 @@
         {% if user.profile.role == "farmer" or user.profile.role == "buyer" %}<a href="{% url 'orders' %}">{% translate "Orders" %}</a>{% endif %}
         {% if user.profile.role == "transporter" or user.profile.role == "farmer" or user.profile.role == "buyer" %}<a href="{% url 'transport' %}">{% translate "Transport" %}</a>{% endif %}
         <a href="{% url 'notifications' %}">{% translate "Alerts" %}</a>
-        <form class="nav-logout" method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button" type="submit">{% translate "Log out" %}</button></form>
+        <form class="nav-logout" method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="nav-logout-button" type="submit" aria-label="{% translate 'Log out of Smart AgroConnect' %}">{% translate "Log out" %}</button></form>
       {% else %}
         <a href="{% url 'login' %}">{% translate "Log in" %}</a><a class="nav-cta" href="{% url 'register' %}">{% translate "Join the network" %}</a>
       {% endif %}

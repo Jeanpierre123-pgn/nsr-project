@@ -59,6 +59,16 @@ class AgroConnectTests(TestCase):
             User.objects.get(username="newfarmer").profile.role, Profile.Role.FARMER
         )
 
+    def test_authenticated_pages_show_logout_control(self):
+        self.client.force_login(self.farmer_user)
+        response = self.client.get("/assistant/")
+        self.assertContains(response, 'action="/logout/"')
+        self.assertContains(response, "Log out")
+
+        logout_response = self.client.post("/logout/")
+        self.assertRedirects(logout_response, "/")
+        self.assertFalse(self.client.session.get("_auth_user_id"))
+
     def test_registration_supports_buyer_and_requires_transporter_details(self):
         for role, username, vehicle_fields in (
             (Profile.Role.BUYER, "newbuyer", {}),
